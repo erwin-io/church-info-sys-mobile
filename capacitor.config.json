@@ -1,0 +1,22 @@
+{
+  "appId": "com.churchinfo.mobile",
+  "appName": "Church Info System Mobile",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www",
+  "server": "http://localhost:8100/",
+  "plugins": {
+    "SplashScreen": {
+      "launchShowDuration": 0
+    },
+    "PushNotifications": {
+      "sound": "notif_alert",
+      "presentationOptions": [
+        "badge",
+        "sound",
+        "alert"
+      ]
+    }
+  },
+  "cordova": {}
+}

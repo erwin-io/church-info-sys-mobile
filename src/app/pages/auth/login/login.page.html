@@ -1,0 +1,73 @@
+
+<ion-content>
+  <div class="login container">
+    <div class="form-container">
+      <form
+        [formGroup]="loginForm"
+        (ngSubmit)="onFormSubmit()">
+        <fieldset [disabled]="isSubmitting">
+          <h4 class="welcome">Welcome to</h4>
+          <div class="form-field-group">
+            <div class="app_banner">
+              <div class="image-container">
+                <img src="../../../../assets/img/app_banner.png">
+              </div>
+            </div>
+            <span class="login-text">Log into your account</span>
+          </div>
+          <div class="form-field-group">
+            <mat-form-field appearance="outline">
+              <mat-label>Username</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Username"
+                formControlName="username"
+                autocapitalize="none"
+                oninput="this.value = this.value.toLowerCase()"
+              />
+            </mat-form-field>
+          </div>
+          <div class="form-field-group">
+            <mat-form-field appearance="outline">
+              <mat-label>Password</mat-label>
+              <input
+                matInput
+                type="password"
+                placeholder="Password"
+                formControlName="password"
+                #password
+              />
+              <mat-icon
+                class="icon-right"
+                (click)="password.type= (password.type === 'password' ? 'text' : 'password')"
+                style="cursor: pointer;"
+                matSuffix>{{ password.type === 'password' ? 'visibility' : 'visibility_off' }}</mat-icon>
+            </mat-form-field>
+          </div>
+          <div class="form-field-group">
+            <mat-checkbox
+              [disabled]="isSubmitting"
+              formControlName="rememberMe"
+              color="primary">Remember me</mat-checkbox>
+          </div>
+          <div class="action">
+            <button
+              type="submit"
+              mat-flat-button
+              color="primary"
+              >Log In</button>
+              <button
+                routerLink="/"
+                mat-stroked-button
+                color="primary"
+                >Back to home</button>
+          </div>
+        </fieldset>
+      </form>
+    </div>
+    <div class="login-footer">
+      <span>Don't have an account? <a routerLink="/signup" replaceUrl="true">Sign up</a></span>
+    </div>
+  </div>
+</ion-content>

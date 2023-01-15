@@ -1,0 +1,7 @@
+<?xml version='1.0' encoding='utf-8'?>
+<resources>
+    <string name="app_name">Church Info System Mobile</string>
+    <string name="title_activity_main">Church Info System Mobile</string>
+    <string name="package_name">com.churchinfo.mobile</string>
+    <string name="custom_url_scheme">com.churchinfo.mobile</string>
+</resources>

@@ -1,0 +1,134 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()" >
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center">New Reservation</ion-title>
+    <div slot="end" style="width: 48px"></div>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <mat-stepper animationDuration="200" [linear]="false" #reservationStepper >
+    <mat-step [stepControl]="selectReservationTypeForm" label="Fill out your address">
+      <form
+      id="selectReservationTypeForm"
+      [formGroup]="selectReservationTypeForm"
+      (ngSubmit)="selectReservationTypeForm.valid ? reservationStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-label>Select reservation type</mat-label>
+            <ion-radio-group formControlName="reservationTypeId" >
+              <ion-item fill="outline" lines="none" *ngFor="let reservationType of reservationTypeOption">
+                <ion-label>{{reservationType.name}}</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" [value]="reservationType.reservationTypeId"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+            <span class="error" *ngIf="errorControls.reservationTypeId.touched && errorControls.reservationTypeId.errors && errorControls.reservationTypeId.errors.required">
+              Please select a reservation type
+            </span>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="selectTimeSlotForm" >
+      <form
+      id="selectTimeSlotForm"
+      [formGroup]="selectTimeSlotForm"
+      (ngSubmit)="selectTimeSlotForm.valid ? reservationStepper.next() : false">
+        <fieldset [disabled]="isSubmitting || isLoading">
+          <div class="form-field-group">
+            <mat-label slot="start">Select reservation date</mat-label>
+            <ion-item id="open-reservation-date-picker" [disabled]="isLoading" fill="outline" lines="none">
+              <ion-label>{{formData.reservationDate | date: 'EEEE, MMMM d, y'}}</ion-label>
+            </ion-item>
+            <ion-modal trigger="open-reservation-date-picker" [cssClass]="'bottom-end'">
+              <ng-template>
+                <ion-datetime
+                  #selectTimeSlotDateCtrl
+                  [min]="minDate"
+                  presentation="date"
+                  size="cover"
+                  formControlName="selectTimeSlotDate"
+                  [showDefaultButtons]="true"
+                ></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          <div class="form-field-group" *ngIf="!isLoading; else elseLoadingTimeSlot;" >
+            <mat-label *ngIf="availableTimeSlot.length > 0">Select time slot</mat-label>
+            <ion-radio-group [disabled]="isLoading" formControlName="selectTime" *ngIf="availableTimeSlot.length > 0">
+              <ion-item fill="outline" lines="none" *ngFor="let timeSlot of availableTimeSlot">
+                <ion-label>{{tConvert(timeSlot)}}</ion-label>
+                <ion-radio slot="end" [value]="timeSlot"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+          </div>
+          <ng-template #elseLoadingTimeSlot>
+            <div class="no-time-slot-available">
+              <span>Loading time slot please wait...</span>
+            </div>
+          </ng-template>
+          <ng-container *ngIf="!isLoading && availableTimeSlot.length <=0">
+            <div class="no-time-slot-available">
+              <span>Sorry!<br>No available time slot to show, <br>try another date</span>
+            </div>
+          </ng-container>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="remarksForm" >      
+      <form
+        id="remarksForm"
+        [formGroup]="remarksForm"
+        (ngSubmit)="remarksForm.valid ? reservationStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-form-field appearance="outline">
+              <mat-label>Remarks(Optional)</mat-label>
+              <textarea
+                style="height: 200px"
+                matInput
+                type="text"
+                placeholder="Remarks"
+                formControlName="remarks"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+  </mat-stepper>
+
+</ion-content>
+<div class="sched-controls-bottom">
+  <ion-button
+    [disabled]="isLoading || !selectReservationTypeForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 0"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="reservationStepper.next();">Next</ion-button>
+    <ion-button
+      [disabled]="isLoading || !selectTimeSlotForm.valid"
+      *ngIf="reservationStepper.selectedIndex === 1"
+      color="primary"
+      size="large"
+      expand="block"
+      (click)="reservationStepper.next();">Next</ion-button>
+    <ion-button
+      [disabled]="isLoading || !remarksForm.valid"
+      *ngIf="reservationStepper.selectedIndex === 2"
+      color="primary"
+      size="large"
+      expand="block"
+      (click)="save()">Save</ion-button>
+    <ion-button
+      *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 2"
+      color="primary"
+      size="large"
+      expand="block"
+      fill="outline"
+      (click)="reservationStepper.previous()">Back</ion-button>
+</div>
