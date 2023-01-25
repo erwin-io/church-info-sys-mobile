@@ -17,21 +17,23 @@
   </ion-refresher>
   <div *ngIf="!isLoading; else elseLoading">
     <ion-list *ngIf="reservation.length > 0; else elseNoData">
-      <ion-item *ngFor="let a of reservation"  button detail="true" (click)="onOpenDetails(a)">
+      <ion-item *ngFor="let r of reservation"  button detail="true" (click)="onOpenDetails(r)">
         <ion-label>
           <div>
             <h3>
-              <strong>ID #: {{a.reservationId | numberLeadZero:5}}
+              <strong>ID #: {{r.reservationId | numberLeadZero:5}}
               <ion-text
-              [color]="(a.reservationStatus.reservationStatusId === '1' || a.reservationStatus.reservationStatusId === '4' ? 'danger' : '') ||
-              (a.reservationStatus.reservationStatusId === '2' ? 'primary' : '') ||
-              (a.reservationStatus.reservationStatusId === '3' ?? 'tertiary')">
-              {{a.reservationStatus.name}}
+              [color]="(r.reservationStatus.reservationStatusId === '1' || r.reservationStatus.reservationStatusId === '4' ? 'danger' : '') ||
+              (r.reservationStatus.reservationStatusId === '2' ? 'primary' : '') ||
+              (r.reservationStatus.reservationStatusId === '3' ?? 'tertiary')">
+              {{r.reservationStatus.name}}
             </ion-text>
               </strong>
             </h3>
-            <p><strong>{{a.reservationType.name}}</strong></p>
-            <p>{{a.reservationDate | date: 'MMMM dd, yyyy'}} {{a.reservationDate + ' ' + a.time | date: 'hh:mm a'}}</p>
+            <p><strong>{{r.reservationType.name}}</strong></p>
+            <p class="value" *ngIf="r.reservationType.reservationTypeId === '1' || r.reservationType.reservationTypeId === '2'">{{r.massCategory.name}} </p>
+            <p class="value" *ngIf="r.reservationType.reservationTypeId === '3'">{{r.massIntentionType.name}}</p>
+            <p>{{r.reservationDate | date: 'MMMM dd, yyyy'}} {{r.reservationDate + ' ' + r.time | date: 'hh:mm a'}}</p>
           </div>
         </ion-label>
       </ion-item>

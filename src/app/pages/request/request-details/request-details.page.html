@@ -1,0 +1,93 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button [disabled]="isLoading" (click)="cancel()" >
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center">Details</ion-title>
+    <div slot="end" style="width: 48px"></div>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <div *ngIf="!isLoading; else loading" class="details-container">
+    <ion-item class="item" >
+      <ion-label text-wrap>
+        <div class="item">
+          <h2 class="title"># <strong>{{details.requestId | numberLeadZero: 5}}</strong></h2>
+        </div>
+      </ion-label>
+    </ion-item>
+    <ion-item class="item" >
+      <ion-label text-wrap>
+          <h3 class="sub">
+            <strong>
+              <ion-text
+                [color]="(details.requestStatus.requestStatusId === '1' || details.requestStatus.requestStatusId === '4' ? 'danger' : '') ||
+                (details.requestStatus.requestStatusId === '2' ? 'primary' : '') ||
+                (details.requestStatus.requestStatusId === '3' ?? 'tertiary')">
+                {{details.requestStatus.name}}
+              </ion-text>
+            </strong>
+          </h3>
+        <h3 class="desc">Status</h3>
+      </ion-label>
+    </ion-item>
+    <ion-item class="item" >
+      <ion-label text-wrap>
+        <div class="item type">
+          <h1 class="title">{{details.requestType.name}}</h1>
+          <h3 class="sub">Request Type</h3>
+        </div>
+      </ion-label>
+    </ion-item>
+    <ion-item class="item" >
+      <ion-icon name="pricetag" slot="start"></ion-icon>
+      <ion-label text-wrap>
+        <h2 class="title">{{details.remarks}}</h2>
+        <span class="desc">{{details.remarks !=='' ? 'Remarks' : 'No Remarks'}}</span>
+      </ion-label>
+    </ion-item>
+  </div>
+  <ng-template #loading>
+    <div class="details-container" >
+      <ion-item class="item" >
+        <ion-label text-wrap>
+            <h3 class="sub">
+              <strong>
+                <ion-text>
+                  <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+                </ion-text>
+              </strong>
+            </h3>
+          <h3 class="desc">
+            <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+          </h3>
+        </ion-label>
+      </ion-item>
+      <ion-item class="item" >
+        <ion-label text-wrap>
+          <div class="item type">
+            <h1 class="title">
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </h1>
+            <h3 class="sub">
+              <ion-skeleton-text [animated]="true"></ion-skeleton-text>
+            </h3>
+          </div>
+        </ion-label>
+      </ion-item>
+    </div>
+  </ng-template>
+
+</ion-content>
+
+<div class="req-controls-bottom">
+  <ion-button
+    [disabled]="isLoading"
+    *ngIf="details.requestStatus.requestStatusId === '1'"
+    color="danger"
+    expand="block"
+    fill="outline"
+    (click)="onClosedRequest()">Closed request</ion-button>
+</div>

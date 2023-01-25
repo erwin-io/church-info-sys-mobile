@@ -1,0 +1,39 @@
+ion-header::after {
+  background-image: none;
+}
+
+
+.details-container {
+  // display: flex;
+  // flex-direction: column;
+  .item {
+    color: #000!important;
+    display: flex;
+    flex-direction: column;
+    .title,.sub {
+      margin: 5px 0!important;
+    }
+    .desc {
+      color: #999999!important;
+    }
+    &.type {
+      .title {
+        font-weight: 500;
+      }
+    }
+  }
+}
+
+.req-controls-bottom {
+  position: relative;
+  display: block;
+  width: 100%;
+  background: #ffffff;
+  padding: 5px 10px;
+  box-shadow: 0 3px 10px rgb(0 0 0 / 0.2);
+  ion-button {
+    height: 45px;
+    font-size: 15px;
+  }
+}
+

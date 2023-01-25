@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ViewEncapsulation } from '@angular/core';
 import { Router } from '@angular/router';
 import { ModalController, AlertController } from '@ionic/angular';
 import { forkJoin } from 'rxjs';
@@ -13,6 +13,7 @@ import { SettingsPage } from '../settings/settings.page';
   selector: 'app-home',
   templateUrl: 'home.page.html',
   styleUrls: ['home.page.scss'],
+  encapsulation: ViewEncapsulation.None
 })
 export class HomePage implements OnInit {
   isLoading;
@@ -27,6 +28,8 @@ export class HomePage implements OnInit {
     private alertController: AlertController,
   ) {
     const currentUser = this.storageService.getLoginUser();
+
+
     if(this.isAuthenticated) {
       this.initDashboard(currentUser.clientId);
     }

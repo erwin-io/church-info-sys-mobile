@@ -5,7 +5,6 @@ import { AlertController } from '@ionic/angular';
 import { LoginResult } from 'src/app/core/model/loginresult.model';
 import { AppConfigService } from 'src/app/core/services/app-config.service';
 import { AuthService } from 'src/app/core/services/auth.service';
-import { FcmService } from 'src/app/core/services/fcm.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { StorageService } from 'src/app/core/storage/storage.service';
 import { LoaderService } from 'src/app/core/ui-service/loader.service';
@@ -29,7 +28,6 @@ export class VerifyOtpPage implements OnInit {
     private alertController: AlertController,
     private storageService: StorageService,
     private loaderService: LoaderService,
-    private fcmService: FcmService,
     private appconfig: AppConfigService,
     private pageLoaderService: PageLoaderService,
     ) {
@@ -78,7 +76,6 @@ export class VerifyOtpPage implements OnInit {
             this.storageService.saveSessionExpiredDate(today);
             const userData: LoginResult = res.data;
             this.storageService.saveLoginUser(userData);
-            this.fcmService.init();
             this.router.navigate(['/'], { replaceUrl: true });
             this.isSubmitting = false;
           } else {

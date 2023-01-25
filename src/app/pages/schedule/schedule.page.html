@@ -4,7 +4,7 @@
     <ion-title style="text-align: center">Schedule</ion-title>
     <ion-buttons slot="end">
       <ion-button *ngIf="isAuthenticated" (click)="history()" >
-        <ion-icon name="time-outline"></ion-icon>
+        <ion-icon slot="icon-only" name="time-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -33,25 +33,25 @@
   <div style="display: flex; flex-direction: column;" [style]="isAuthenticated ? 'height: 60%' : 'height: 100%'">
     <h2 class="list-title" *ngIf="isAuthenticated">Reservations</h2>
     <div style="display: flex; flex-direction: column;" *ngIf="reservation.length > 0; else elseNoData">
-      <div *ngFor="let a of reservation">
+      <div *ngFor="let r of reservation">
         <ion-card mode="ios">
           <div class="sched-card">
             <div class="card-header">
-              <span>{{a.reservationDate | date: 'segmentChanged'}}</span>
-              <h2 class="date">{{a.reservationDate | date: 'dd'}}</h2>
-              <span><strong>{{a.reservationDate + ' ' + a.time | date: 'hh:mm a'}}</strong></span>
-              <span>{{a.reservationDate | date: 'EEEE'}}</span>
+              <span>{{r.reservationDate | date: 'segmentChanged'}}</span>
+              <h2 class="date">{{r.reservationDate | date: 'dd'}}</h2>
+              <span><strong>{{r.reservationDate + ' ' + r.time | date: 'hh:mm a'}}</strong></span>
+              <span>{{r.reservationDate | date: 'EEEE'}}</span>
             </div>
             <div class="card-content">
               <div class="content-row border">
                 <div class="field ">
-                  <h3 class="value"><strong>ID #: {{a.reservationId | numberLeadZero:5}}</strong></h3>
+                  <h3 class="value"><strong>ID #: {{r.reservationId | numberLeadZero:5}}</strong></h3>
                 </div>
               </div>
               <div class="content-row">
                 <div class="field action">
                   <ion-buttons slot="end">
-                    <ion-button (click)="showMenu(a)">
+                    <ion-button (click)="showMenu(r)">
                       <ion-icon name="ellipsis-vertical-sharp"></ion-icon>
                     </ion-button>
                   </ion-buttons>
@@ -60,7 +60,13 @@
               <div class="content-row">
                 <div class="field type">
                   <h3>Type</h3>
-                  <h3 class="value"><strong>{{a.reservationType.name}}</strong></h3>
+                  <h3 class="value"><strong>{{r.reservationType.name}}</strong></h3>
+                </div>
+              </div>
+              <div class="content-row">
+                <div class="field type">
+                  <h3 class="value" *ngIf="r.reservationType.reservationTypeId === '1' || r.reservationType.reservationTypeId !== '2'">{{r.massCategory.name}}</h3>
+                  <h3 class="value" *ngIf="r.reservationType.reservationTypeId === '3'">{{r.massIntentionType.name}}</h3>
                 </div>
               </div>
             </div>

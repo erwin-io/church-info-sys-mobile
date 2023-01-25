@@ -10,7 +10,6 @@ import { LoaderService } from 'src/app/core/ui-service/loader.service';
 import { UserService } from 'src/app/core/services/user.service';
 import { PageLoaderService } from 'src/app/core/ui-service/page-loader.service';
 import { AppConfigService } from 'src/app/core/services/app-config.service';
-import { FcmService } from 'src/app/core/services/fcm.service';
 
 @Component({
   selector: 'app-login',
@@ -32,16 +31,15 @@ export class LoginPage implements OnInit {
     private alertController: AlertController,
     private storageService: StorageService,
     private loaderService: LoaderService,
-    private fcmService: FcmService,
     private appconfig: AppConfigService,
     private pageLoaderService: PageLoaderService,
     ) {
-      this.route.queryParams
-        .subscribe(params => {
-          console.log(params);
-          this.enableBackToHome = params.ref.includes('home');
-        }
-      );
+      // this.route.queryParams
+      //   .subscribe(params => {
+      //     console.log(params);
+      //     this.enableBackToHome = params.ref.includes('home');
+      //   }
+      // );
 
       this.sessionTimeout = Number(
         this.appconfig.config.sessionConfig.sessionTimeout
@@ -69,7 +67,6 @@ export class LoginPage implements OnInit {
       await this.pageLoaderService.open('Signing in please wait...');
       this.authService.login(params)
         .subscribe(async res => {
-          await this.pageLoaderService.close();
           if (res.success) {
             if(this.appconfig.config.auth.requireOTP === true && !res.data.isVerified) {
               const navigationExtras: NavigationExtras = {
@@ -89,9 +86,9 @@ export class LoginPage implements OnInit {
               this.storageService.saveSessionExpiredDate(today);
               const userData: LoginResult = res.data;
               this.storageService.saveLoginUser(userData);
-              this.fcmService.init();
               this.router.navigate(['/'], { replaceUrl: true });
               this.isSubmitting = false;
+              await this.pageLoaderService.close();
             }
           } else {
             this.isSubmitting = false;

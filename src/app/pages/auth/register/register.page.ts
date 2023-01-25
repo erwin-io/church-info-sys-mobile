@@ -66,13 +66,12 @@ export class RegisterPage implements OnInit {
       await this.pageLoaderService.open('Processing please wait...');
       this.authService.register(form)
         .subscribe(async res => {
-          await this.pageLoaderService.close();
           if (res.success) {
             console.log(res.data);
             await this.presentAlert({
               header: 'Saved!',
               buttons: ['OK']
-            }).then(() =>{
+            }).then(async () =>{
               if(this.appconfig.config.auth.requireOTP === true) {
                 const navigationExtras: NavigationExtras = {
                   state: {
@@ -82,12 +81,16 @@ export class RegisterPage implements OnInit {
                   }
                 };
                 this.router.navigate(['verify-otp'], navigationExtras);
+                await this.pageLoaderService.close();
               }else {
                 this.router.navigate(['/login'], { replaceUrl: true });
+                await this.pageLoaderService.close();
               }
               this.isSubmitting = false;
             });
+            await this.pageLoaderService.close();
           } else {
+            await this.pageLoaderService.close();
             this.isSubmitting = false;
             await this.presentAlert({
               header: 'Try again!',
@@ -105,6 +108,7 @@ export class RegisterPage implements OnInit {
           });
         });
     } catch (e){
+      await this.pageLoaderService.close();
       this.isSubmitting = false;
       await this.presentAlert({
         header: 'Try again!',

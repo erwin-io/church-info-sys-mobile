@@ -8,10 +8,21 @@
     <ion-title style="text-align: center">New Reservation</ion-title>
     <div slot="end" style="width: 48px"></div>
   </ion-toolbar>
+  <ion-toolbar [ngStyle]="{ 'display': previewData.reservationType && previewData.reservationType !== '' ? '' : 'none' }">
+    <div style="display: flex;width: 100%;padding: 16px;align-items:center">
+      <h3 slot="start"><strong>Preview</strong></h3>
+      <div style="display: flex;width:100%;"></div>
+      <ion-buttons slot="end">
+        <ion-button id="open-modal-preview">
+          <ion-icon name="chevron-down-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+  </ion-toolbar>
 </ion-header>
 <ion-content class="ion-padding">
   <mat-stepper animationDuration="200" [linear]="false" #reservationStepper >
-    <mat-step [stepControl]="selectReservationTypeForm" label="Fill out your address">
+    <mat-step [stepControl]="selectReservationTypeForm" label="">
       <form
       id="selectReservationTypeForm"
       [formGroup]="selectReservationTypeForm"
@@ -20,13 +31,83 @@
           <div class="form-field-group" >
             <mat-label>Select reservation type</mat-label>
             <ion-radio-group formControlName="reservationTypeId" >
-              <ion-item fill="outline" lines="none" *ngFor="let reservationType of reservationTypeOption">
-                <ion-label>{{reservationType.name}}</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" [value]="reservationType.reservationTypeId"></ion-radio>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Baptism</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Wedding</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Mass intentions</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Funeral mass</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="4"></ion-radio>
               </ion-item>
             </ion-radio-group>
             <span class="error" *ngIf="errorControls.reservationTypeId.touched && errorControls.reservationTypeId.errors && errorControls.reservationTypeId.errors.required">
               Please select a reservation type
+            </span>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="selectMassCategoryForm" label="">
+      <form
+      id="selectMassCategoryForm"
+      [formGroup]="selectMassCategoryForm"
+      (ngSubmit)="selectMassCategoryForm.valid ? reservationStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-label>Select mass category</mat-label>
+            <ion-radio-group formControlName="massCategoryId" >
+              <ion-item fill="outline" lines="none">
+                <ion-label>Special</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Common</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+            <span class="error" *ngIf="errorControls.massCategoryId.touched && errorControls.massCategoryId.errors && errorControls.massCategoryId.errors.required">
+              Please select a mass category
+            </span>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="selectMassIntensionTypeForm" label="">
+      <form
+      id="selectMassIntensionTypeForm"
+      [formGroup]="selectMassIntensionTypeForm"
+      (ngSubmit)="selectMassIntensionTypeForm.valid ? reservationStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-label>Select mass intention type</mat-label>
+            <ion-radio-group formControlName="massIntentionTypeId" >
+              <ion-item fill="outline" lines="none">
+                <ion-label>Pamisa Pasalamat</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Pamisa sa Birthday</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>House Blessing</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none">
+                <ion-label>Pamisa sa Kalag</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="4"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+            <span class="error" *ngIf="errorControls.massIntentionTypeId.touched && errorControls.massIntentionTypeId.errors && errorControls.massIntentionTypeId.errors.required">
+              Please select a mass intention type
             </span>
           </div>
         </fieldset>
@@ -101,6 +182,54 @@
     </mat-step>
   </mat-stepper>
 
+  <ion-modal #modal trigger="open-modal-preview" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.25, 0.5, 0.8, 1]" 
+  animated="true" swipeToClose="true"
+  showBackdrop="true"
+  canDismiss="true"
+  handle="true"
+  handleBehavior="cycle"
+  backdropDismiss="true">
+    <ng-template>
+      <ion-content>
+        <h3 style="
+        color: rgba(0,0,0)!important;
+        margin: 20px 20px 0 20px!important;
+        text-align: center;"><strong>Preview</strong></h3>
+        <ion-list lines="none" >
+          <ion-item>
+            <ion-label *ngIf="previewData.reservationType && previewData.reservationType !== ''">
+              <h3 style="color: black;"><strong>{{previewData.reservationType}}</strong></h3>
+              <p style="color: black;">Reservation type</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="previewData.massCategory && previewData.massCategory !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.massCategory}}</strong></h3>
+              <p style="color: black;">Mass Category</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="previewData.massIntentionType && previewData.massIntentionType !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.massIntentionType}}</strong></h3>
+              <p style="color: black;">Mass intention type</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="previewData.reservationDate && selectTimeSlotForm.value.selectTime !== '' && !formData.time.toLowerCase().includes('invalid date')">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.reservationDate + ' ' + formData.time | date: 'EEE, MMM dd hh:mm a'}}</strong></h3>
+              <p style="color: black;">Date</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="previewData.remarks && previewData.remarks !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.remarks}}</strong></h3>
+              <p style="color: black;">Remarks</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
 <div class="sched-controls-bottom">
   <ion-button
@@ -109,26 +238,40 @@
     color="primary"
     size="large"
     expand="block"
+    (click)="onReservationTypeSelected(formData.reservationTypeId)">Next</ion-button>
+  <ion-button
+    [disabled]="isLoading || !selectMassCategoryForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 1"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="onMassCategorySelected()">Next</ion-button>
+  <ion-button
+    [disabled]="isLoading || !selectMassIntensionTypeForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 2"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="onMassIntensionTypeSelected()">Next</ion-button>
+  <ion-button
+    [disabled]="isLoading || !selectTimeSlotForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 3"
+    color="primary"
+    size="large"
+    expand="block"
     (click)="reservationStepper.next();">Next</ion-button>
-    <ion-button
-      [disabled]="isLoading || !selectTimeSlotForm.valid"
-      *ngIf="reservationStepper.selectedIndex === 1"
-      color="primary"
-      size="large"
-      expand="block"
-      (click)="reservationStepper.next();">Next</ion-button>
-    <ion-button
-      [disabled]="isLoading || !remarksForm.valid"
-      *ngIf="reservationStepper.selectedIndex === 2"
-      color="primary"
-      size="large"
-      expand="block"
-      (click)="save()">Save</ion-button>
-    <ion-button
-      *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 2"
-      color="primary"
-      size="large"
-      expand="block"
-      fill="outline"
-      (click)="reservationStepper.previous()">Back</ion-button>
+  <ion-button
+    [disabled]="isLoading || !remarksForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 4"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="save()">Save</ion-button>
+  <ion-button
+    *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 4"
+    color="primary"
+    size="large"
+    expand="block"
+    fill="outline"
+    (click)="onBack()">Back</ion-button>
 </div>

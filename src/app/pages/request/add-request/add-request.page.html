@@ -1,0 +1,269 @@
+<ion-header>
+  <ion-toolbar>
+    <ion-buttons slot="start">
+      <ion-button (click)="cancel()" >
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title style="text-align: center">New Request</ion-title>
+    <div slot="end" style="width: 48px"></div>
+  </ion-toolbar>
+  <ion-toolbar [ngStyle]="{ 'display': previewData.requestType && previewData.requestType !== '' ? '' : 'none' }">
+    <div style="display: flex;width: 100%;padding: 16px;align-items:center">
+      <h3 slot="start"><strong>Preview</strong></h3>
+      <div style="display: flex;width:100%;"></div>
+      <ion-buttons slot="end">
+        <ion-button id="open-modal-preview">
+          <ion-icon name="chevron-down-circle"></ion-icon>
+        </ion-button>
+      </ion-buttons>
+    </div>
+  </ion-toolbar>
+</ion-header>
+<ion-content class="ion-padding">
+  <mat-stepper animationDuration="200" [linear]="false" #requestStepper >
+    <mat-step [stepControl]="selectRequestTypeForm" label="Fill out your address">
+      <form
+      id="selectRequestTypeForm"
+      [formGroup]="selectRequestTypeForm"
+      (ngSubmit)="selectRequestTypeForm.valid ? requestStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-label>Select request type</mat-label>
+            <ion-radio-group formControlName="requestTypeId" >
+              <ion-item fill="outline" lines="none" >
+                <ion-label>Baptismal Certificate</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none" >
+                <ion-label>Certificate of Confirmation</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
+              </ion-item>
+              <ion-item fill="outline" lines="none" >
+                <ion-label>Marriage Contract</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+            <span class="error" *ngIf="errorControls.requestTypeId.touched && errorControls.requestTypeId.errors && errorControls.requestTypeId.errors.required">
+              Please select a request type
+            </span>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="requestDetailsForm" >
+      <form
+      id="requestDetailsForm"
+      [formGroup]="requestDetailsForm"
+      (ngSubmit)="requestDetailsForm.valid ? requestStepper.next() : false">
+        <fieldset [disabled]="isSubmitting || isLoading">
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId !== '3'">
+            <mat-label slot="start">Full name</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Full name</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Full name"
+                formControlName="requestersFullName">
+            </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
+            <mat-label slot="start">Name of the Husband</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Name of the Husband</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Name of the Husband"
+                formControlName="husbandFullName">
+            </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
+            <mat-label slot="start">Name of the Wife</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Name of the Wife</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Name of the Wife"
+                formControlName="wifeFullName">
+              </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '1'">
+            <mat-label slot="start">Select date baptized</mat-label>
+            <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
+              <ion-label>{{formData.dateBaptized | date: 'EEEE, MMMM d, y'}}</ion-label>
+            </ion-item>
+            <ion-modal trigger="open-reference-date-picker" [cssClass]="'bottom-end'">
+              <ng-template>
+                <ion-datetime
+                  #selectReferenceDateCtrl
+                  presentation="date"
+                  size="cover"
+                  formControlName="dateBaptized"
+                  [showDefaultButtons]="true"
+                ></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '2'">
+            <mat-label slot="start">Select date of confirmation</mat-label>
+            <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
+              <ion-label>{{formData.dateOfConfirmation | date: 'EEEE, MMMM d, y'}}</ion-label>
+            </ion-item>
+            <ion-modal trigger="open-reference-date-picker" [cssClass]="'bottom-end'">
+              <ng-template>
+                <ion-datetime
+                  #selectReferenceDateCtrl
+                  presentation="date"
+                  size="cover"
+                  formControlName="dateOfConfirmation"
+                  [showDefaultButtons]="true"
+                ></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
+            <mat-label slot="start">Select date married</mat-label>
+            <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
+              <ion-label>{{formData.dateMarried | date: 'EEEE, MMMM d, y'}}</ion-label>
+            </ion-item>
+            <ion-modal trigger="open-reference-date-picker" [cssClass]="'bottom-end'">
+              <ng-template>
+                <ion-datetime
+                  #selectReferenceDateCtrl
+                  presentation="date"
+                  size="cover"
+                  formControlName="dateMarried"
+                  [showDefaultButtons]="true"
+                ></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="remarksForm" >      
+      <form
+        id="remarksForm"
+        [formGroup]="remarksForm"
+        (ngSubmit)="remarksForm.valid ? requestStepper.next() : false">
+        <fieldset>
+          <div class="form-field-group" >
+            <mat-form-field appearance="outline">
+              <mat-label>Remarks(Optional)</mat-label>
+              <textarea
+                style="height: 200px"
+                matInput
+                type="text"
+                placeholder="Remarks"
+                formControlName="remarks"
+              ></textarea>
+            </mat-form-field>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
+  </mat-stepper>
+  
+
+  <ion-modal #modal trigger="open-modal-preview" [initialBreakpoint]="0.5" [breakpoints]="[0, 0.25, 0.5, 0.8, 1]" 
+  animated="true" swipeToClose="true"
+  showBackdrop="true"
+  canDismiss="true"
+  handle="true"
+  handleBehavior="cycle"
+  backdropDismiss="true">
+    <ng-template>
+      <ion-content>
+        <h3 style="
+        color: rgba(0,0,0)!important;
+        margin: 20px 20px 0 20px!important;
+        text-align: center;"><strong>Preview</strong></h3>
+        <ion-list lines="none" >
+          <ion-item>
+            <ion-label *ngIf="previewData.requestType && previewData.requestType !== ''">
+              <h3 style="color: black;"><strong>{{previewData.requestType}}</strong></h3>
+              <p style="color: black;">Request type</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId !== '3' && previewData.requestersFullName && previewData.requestersFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.requestersFullName}}</strong></h3>
+              <p style="color: black;">Full name</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '3' && previewData.husbandFullName && previewData.husbandFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.husbandFullName}}</strong></h3>
+              <p style="color: black;">Name of the Husband</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '3' && previewData.wifeFullName && previewData.wifeFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.wifeFullName}}</strong></h3>
+              <p style="color: black;">Name of the Wife</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '1' && previewData.requestersFullName && previewData.requestersFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.dateBaptized | date: 'MMM dd, yyyy'}}</strong></h3>
+              <p style="color: black;">Date baptized</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '2' && previewData.requestersFullName && previewData.requestersFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.dateOfConfirmation | date: 'MMM dd, yyyy'}}</strong></h3>
+              <p style="color: black;">Date of confirmation</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '3' && previewData.husbandFullName && previewData.husbandFullName !== '' && previewData.wifeFullName && previewData.wifeFullName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.dateMarried | date: 'MMM dd, yyyy'}}</strong></h3>
+              <p style="color: black;">Date married</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="requestStepper.selectedIndex === 2 && previewData.remarks && previewData.remarks !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.remarks}}</strong></h3>
+              <p style="color: black;">Remarks</p>
+            </ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+</ion-content>
+<div class="req-controls-bottom">
+  <ion-button
+    [disabled]="isLoading || !selectRequestTypeForm.valid"
+    *ngIf="requestStepper.selectedIndex === 0"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="requestStepper.next();">Next</ion-button>
+    <ion-button
+      [disabled]="isLoading || !requestDetailsForm.valid"
+      *ngIf="requestStepper.selectedIndex === 1"
+      color="primary"
+      size="large"
+      expand="block"
+      (click)="requestStepper.next();">Next</ion-button>
+    <ion-button
+      [disabled]="isLoading || !remarksForm.valid"
+      *ngIf="requestStepper.selectedIndex === 2"
+      color="primary"
+      size="large"
+      expand="block"
+      (click)="save()">Save</ion-button>
+    <ion-button
+      *ngIf="requestStepper.selectedIndex > 0 && requestStepper.selectedIndex <= 2"
+      color="primary"
+      size="large"
+      expand="block"
+      fill="outline"
+      (click)="requestStepper.previous()">Back</ion-button>
+</div>

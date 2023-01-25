@@ -1,7 +1,7 @@
 <ion-header no-border no-shadow>
-  <ion-toolbar>
+  <ion-toolbar class="home-toolbar">
     <div slot="start" style="width: 48px"></div>
-    <ion-title class="ion-text-center">Home</ion-title>
+    <ion-title class="ion-text-center home">Home</ion-title>
     <ion-buttons slot="end">
       <ion-button (click)="onShowSettings()">
         <ion-icon slot="icon-only" name="person-circle"></ion-icon>
@@ -14,4 +14,47 @@
     <ion-refresher-content >
     </ion-refresher-content>
   </ion-refresher>
+  <div class="container">
+    <div class="welcome">
+      <h1 class="text-main">Welcome to San Nicolas de Bari App</h1>
+      <span class="text-action" id="open-modal" expand="block">Get Started</span>
+    </div>
+    <div class="footer">
+      <span>Contact Us</span>
+      <a href="tel:09463701342">09463701342</a>
+      <a href="mailto:colasdebari1848@gmail.com">colasdebari1848@gmail.com</a>
+    </div>
+  </div>
+  
+  <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5]" 
+  animated="true" swipeToClose="true"
+  showBackdrop="true"
+  canDismiss="true"
+  handle="true"
+  handleBehavior="cycle"
+  backdropDismiss="true">
+    <ng-template>
+      <ion-content>
+        <h3 style="
+        color: rgba(0,0,0)!important;
+        margin: 20px 20px 0 20px;
+        text-align: center;"><strong>SERVICES</strong></h3>
+        <ion-list class="home-menu">
+          <ion-item routerLink="/schedule" (click)="modal.dismiss()" replaceUrl="true">
+            <ion-icon name="today" slot="start"></ion-icon>
+            <ion-label>Book a reservation</ion-label>
+          </ion-item>
+          <ion-item routerLink="/request" (click)="modal.dismiss()" replaceUrl="true">
+            <ion-icon name="document" slot="start" ></ion-icon>
+            <ion-label>Request a certificate</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
 </ion-content>
+<div class="home-background">
+  <div class="mask">
+    <img src="../../../assets/img/background_home.png" alt="">
+  </div>
+</div>

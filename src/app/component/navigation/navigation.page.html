@@ -1,6 +1,6 @@
 
 <ion-tabs (ionTabsWillChange)="onTabsWillChange($event)">
-  <ion-tab-bar slot="bottom">
+  <ion-tab-bar slot="bottom" [ngStyle]="{ 'display': active === 'home' ? 'none' : '' }">
     <ion-tab-button tab="home">
       <ion-icon name="home{{ active === 'home' ? '' : '-outline' }}"></ion-icon>
       <ion-label>Home</ion-label>

@@ -17,6 +17,7 @@ ion-header::after {
   }
 }
 .sched-controls-bottom {
+  z-index: 1000;
   position: relative;
   display: block;
   width: 100%;
@@ -87,8 +88,6 @@ ion-header::after {
             --border-radius: 50%!important;
           }
         }
-      }
-      &.vet {
       }
       .value {
         flex-grow: 1;

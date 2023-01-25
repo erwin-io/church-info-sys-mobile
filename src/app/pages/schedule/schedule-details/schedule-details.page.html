@@ -41,6 +41,22 @@
         </div>
       </ion-label>
     </ion-item>
+    <ion-item class="item" *ngIf="details.reservationType.reservationTypeId === '1' || details.reservationType.reservationTypeId !== '2'">
+      <ion-label text-wrap>
+        <div class="item type">
+          <h1 class="title">{{details.massCategory.name}}</h1>
+          <h3 class="sub">Mass Category</h3>
+        </div>
+      </ion-label>
+    </ion-item>
+    <ion-item class="item" *ngIf="details.reservationType.reservationTypeId === '3'">
+      <ion-label text-wrap>
+        <div class="item type">
+          <h1 class="title">{{details.massIntentionType.name}}</h1>
+          <h3 class="sub">Mass Intention Type</h3>
+        </div>
+      </ion-label>
+    </ion-item>
     <ion-item class="item" >
       <ion-icon name="today" slot="start"></ion-icon>
       <ion-label text-wrap>

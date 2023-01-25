@@ -7,7 +7,6 @@ import { catchError, tap } from 'rxjs/operators';
 import { IServices } from './interface/iservices';
 import { AppConfigService } from './app-config.service';
 import { StorageService } from '../storage/storage.service';
-import { FcmService } from './fcm.service';
 import { UserService } from './user.service';
 import { Client } from '../model/client.model';
 import { ApiResponse } from '../model/api-response.model';
@@ -25,7 +24,6 @@ export class AuthService implements IServices {
     private appconfig: AppConfigService,
     private userService: UserService,
     private storageService: StorageService,
-    private fcmService: FcmService
     ) { }
 
   login(data: any): Observable<ApiResponse<LoginResult>> {
@@ -39,7 +37,6 @@ export class AuthService implements IServices {
   logout(): Observable<any> {
     const currentUser = this.storageService.getLoginUser();
     if(currentUser) {
-      this.fcmService.delete();
       this.userService.updateFirebaseToken({
         userId: currentUser.userId,
         firebaseToken: ''

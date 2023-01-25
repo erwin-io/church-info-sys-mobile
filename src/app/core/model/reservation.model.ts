@@ -9,7 +9,10 @@ export class Reservation {
   adminRemarks: string;
   client: Client;
   reservationType: ReservationType;
+  massIntentionTypeId: string;
   reservationStatus: ReservationStatus;
+  massCategory: MassCategory;
+  massIntentionType: MassIntentionType;
 }
 
 export class ReservationStatus {
@@ -19,5 +22,16 @@ export class ReservationStatus {
 
 export class ReservationType {
   reservationTypeId: string;
+  name: string;
+}
+
+export class MassCategory {
+  massCategoryId: string;
+  name: string;
+}
+
+
+export class MassIntentionType {
+  massIntentionTypeId: string;
   name: string;
 }
