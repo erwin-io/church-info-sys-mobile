@@ -31,6 +31,7 @@ export class AddSchedulePage implements OnInit {
   selectMassCategoryForm: FormGroup;
   selectMassIntensionTypeForm: FormGroup;
   selectTimeSlotForm: FormGroup;
+  nameForm: FormGroup;
   remarksForm: FormGroup;
   isSubmitting = false;
   isLoading = false;
@@ -86,7 +87,8 @@ export class AddSchedulePage implements OnInit {
       this.selectReservationTypeForm.value.reservationTypeId === '3' &&
        this.selectMassIntensionTypeForm.valid ?
       this.selectMassIntensionTypeForm.value.massIntentionTypeId : null,
-      remarks: this.remarksForm.value.remarks
+      remarks: this.remarksForm.value.remarks,
+      ...this.nameForm.value,
     };
   }
 
@@ -97,6 +99,7 @@ export class AddSchedulePage implements OnInit {
       ...this.selectMassIntensionTypeForm.controls,
       ...this.selectTimeSlotForm.controls,
       ...this.remarksForm.controls,
+      ...this.nameForm.controls,
     };
   }
 
@@ -111,7 +114,8 @@ export class AddSchedulePage implements OnInit {
       massIntentionType: this.formData.massIntentionTypeId ?
       this.appconfig.config.lookup.massIntentionType.
       filter(x=>Number(x.massIntentionTypeId) === Number(this.formData.massIntentionTypeId))[0].name : '',
-      remarks: this.formData.remarks
+      remarks: this.formData.remarks,
+      ...this.formData,
     };
   }
 
@@ -124,6 +128,12 @@ export class AddSchedulePage implements OnInit {
     });
     this.selectMassIntensionTypeForm = this.formBuilder.group({
       massIntentionTypeId: [null, Validators.required],
+    });
+    this.nameForm = this.formBuilder.group({
+      firstName: [null],
+      lastName: [null],
+      weddingHusbandName: [null],
+      weddingWifeName: [null],
     });
     this.selectTimeSlotForm = this.formBuilder.group({
       selectTimeSlotDate: [this.minDate, Validators.required],

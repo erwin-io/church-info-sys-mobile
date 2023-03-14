@@ -4,6 +4,10 @@ export class Reservation {
   reservationId: string;
   reservationDate: Date;
   time: string;
+  firstName: string;
+  lastName: string;
+  weddingWifeName: string;
+  weddingHusbandName: string;
   remarks: string;
   isCancelledByAdmin: boolean;
   adminRemarks: string;

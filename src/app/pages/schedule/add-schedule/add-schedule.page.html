@@ -113,6 +113,59 @@
         </fieldset>
       </form>
     </mat-step>
+    <mat-step [stepControl]="nameForm" >
+      <form
+      id="requestDetailsForm"
+      [formGroup]="nameForm"
+      (ngSubmit)="nameForm.valid ? reservationStepper.next() : false">
+        <fieldset [disabled]="isSubmitting || isLoading">
+          <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2'">
+            <mat-label slot="start">First name</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>First name</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="First name"
+                formControlName="firstName">
+            </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2'">
+            <mat-label slot="start">Last name</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Last name</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Last name"
+                formControlName="lastName">
+            </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2'">
+            <mat-label slot="start">Name of the Husband</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Name of the Husband</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Name of the Husband"
+                formControlName="weddingHusbandName">
+            </mat-form-field>
+          </div>
+          <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2'">
+            <mat-label slot="start">Name of the Wife</mat-label>
+            <mat-form-field appearance="outline">
+              <mat-label>Name of the Wife</mat-label>
+              <input
+                matInput
+                type="text"
+                placeholder="Name of the Wife"
+                formControlName="weddingWifeName">
+              </mat-form-field>
+          </div>
+        </fieldset>
+      </form>
+    </mat-step>
     <mat-step [stepControl]="selectTimeSlotForm" >
       <form
       id="selectTimeSlotForm"
@@ -214,6 +267,28 @@
               <p style="color: black;">Mass intention type</p>
             </ion-label>
           </ion-item>
+          <ion-item *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2' &&
+          formData.firstName && formData.firstName !== '' &&
+           formData.lastName && formData.lastName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.firstName + ' ' + previewData.lastName}}</strong></h3>
+              <p style="color: black;">Name</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="formData.reservationTypeId && previewData.reservationTypeId === '2' &&
+          formData.weddingHusbandName && formData.weddingHusbandName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.weddingHusbandName}}</strong></h3>
+              <p style="color: black;">Name of the Husband</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2' &&
+          formData.weddingWifeName && formData.weddingWifeName !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.weddingWifeName}}</strong></h3>
+              <p style="color: black;">Name of the Wife</p>
+            </ion-label>
+          </ion-item>
           <ion-item *ngIf="previewData.reservationDate && selectTimeSlotForm.value.selectTime !== '' && !formData.time.toLowerCase().includes('invalid date')">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.reservationDate + ' ' + formData.time | date: 'EEE, MMM dd hh:mm a'}}</strong></h3>
@@ -254,21 +329,30 @@
     expand="block"
     (click)="onMassIntensionTypeSelected()">Next</ion-button>
   <ion-button
-    [disabled]="isLoading || !selectTimeSlotForm.valid"
+    [disabled]="isLoading ||
+    (formData.reservationTypeId !== '2' ? !formData.firstName || !formData.lastName : false)
+    "
     *ngIf="reservationStepper.selectedIndex === 3"
     color="primary"
     size="large"
     expand="block"
     (click)="reservationStepper.next();">Next</ion-button>
   <ion-button
-    [disabled]="isLoading || !remarksForm.valid"
+    [disabled]="isLoading || !selectTimeSlotForm.valid"
     *ngIf="reservationStepper.selectedIndex === 4"
+    color="primary"
+    size="large"
+    expand="block"
+    (click)="reservationStepper.next();">Next</ion-button>
+  <ion-button
+    [disabled]="isLoading || !remarksForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 5"
     color="primary"
     size="large"
     expand="block"
     (click)="save()">Save</ion-button>
   <ion-button
-    *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 4"
+    *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 5"
     color="primary"
     size="large"
     expand="block"
