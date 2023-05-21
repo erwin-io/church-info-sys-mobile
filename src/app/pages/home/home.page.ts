@@ -95,6 +95,10 @@ export class HomePage implements OnInit {
     event.target.src = '../../../assets/img/profile-not-found.png';
   }
 
+  contact(contact) {
+    window.location.href = contact;
+  }
+
   async presentAlert(options: any) {
     const alert = await this.alertController.create(options);
     await alert.present();

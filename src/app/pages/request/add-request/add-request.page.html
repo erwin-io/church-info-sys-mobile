@@ -30,23 +30,29 @@
         <fieldset>
           <div class="form-field-group" >
             <mat-label>Select request type</mat-label>
-            <ion-radio-group formControlName="requestTypeId" >
-              <ion-item fill="outline" lines="none" >
-                <ion-label>Baptismal Certificate</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none" >
-                <ion-label>Certificate of Confirmation</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none" >
-                <ion-label>Marriage Contract</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
-              </ion-item>
-            </ion-radio-group>
+            <ion-item fill="outline" [disabled]="isSubmitting">
+              <ion-select slot="start" interface="action-sheet" formControlName="requestTypeId" placeholder="Select request type" >
+                <ion-select-option *ngFor="let requestType of requestTypeOption" [value]="requestType.requestTypeId">{{requestType.name}}</ion-select-option>
+              </ion-select>
+            </ion-item>
             <span class="error" *ngIf="errorControls.requestTypeId.touched && errorControls.requestTypeId.errors && errorControls.requestTypeId.errors.required">
               Please select a request type
             </span>
+          </div>
+          <div class="form-field-group" >
+            <mat-label>Select relationship</mat-label>
+            <ion-item fill="outline" [disabled]="isSubmitting">
+              <ion-select slot="start" interface="action-sheet" formControlName="relationshipId" placeholder="Select relationship" >
+                <ion-select-option *ngFor="let relationship of relationshipOption" [value]="relationship.relationshipId">{{relationship.name}}</ion-select-option>
+              </ion-select>
+            </ion-item>
+            <span class="error" *ngIf="errorControls.relationshipId.touched && errorControls.relationshipId.errors && errorControls.relationshipId.errors.required">
+              Please select a relationship
+            </span>
+            <!-- <ion-chip class="request-warning-chip" [outline]="true" *ngIf="formData.requestWarningMessage" color="warning">
+              <ion-icon name="alert-circle-outline" color="warning" size="large"></ion-icon>
+              <ion-label [innerHTML]="formData.requestWarningMessage"></ion-label>
+            </ion-chip> -->
           </div>
         </fieldset>
       </form>
@@ -57,7 +63,7 @@
       [formGroup]="requestDetailsForm"
       (ngSubmit)="requestDetailsForm.valid ? requestStepper.next() : false">
         <fieldset [disabled]="isSubmitting || isLoading">
-          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId !== '3'">
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId !== '2'">
             <mat-label slot="start">Full name</mat-label>
             <mat-form-field appearance="outline">
               <mat-label>Full name</mat-label>
@@ -68,25 +74,25 @@
                 formControlName="requestersFullName">
             </mat-form-field>
           </div>
-          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
-            <mat-label slot="start">Name of the Husband</mat-label>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '2'">
+            <mat-label slot="start">Husband's Full Name</mat-label>
             <mat-form-field appearance="outline">
-              <mat-label>Name of the Husband</mat-label>
+              <mat-label>Husband's Full Name</mat-label>
               <input
                 matInput
                 type="text"
-                placeholder="Name of the Husband"
+                placeholder="Husband's Full Name"
                 formControlName="husbandFullName">
             </mat-form-field>
           </div>
-          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
-            <mat-label slot="start">Name of the Wife</mat-label>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '2'">
+            <mat-label slot="start">Wife's Full Name</mat-label>
             <mat-form-field appearance="outline">
-              <mat-label>Name of the Wife</mat-label>
+              <mat-label>Wife's Full Name</mat-label>
               <input
                 matInput
                 type="text"
-                placeholder="Name of the Wife"
+                placeholder="Wife's Full Name"
                 formControlName="wifeFullName">
               </mat-form-field>
           </div>
@@ -109,6 +115,24 @@
           </div>
           
           <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '2'">
+            <mat-label slot="start">Select date married</mat-label>
+            <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
+              <ion-label>{{formData.dateMarried | date: 'EEEE, MMMM d, y'}}</ion-label>
+            </ion-item>
+            <ion-modal trigger="open-reference-date-picker" [cssClass]="'bottom-end'">
+              <ng-template>
+                <ion-datetime
+                  #selectReferenceDateCtrl
+                  presentation="date"
+                  size="cover"
+                  formControlName="dateMarried"
+                  [showDefaultButtons]="true"
+                ></ion-datetime>
+              </ng-template>
+            </ion-modal>
+          </div>
+          
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
             <mat-label slot="start">Select date of confirmation</mat-label>
             <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
               <ion-label>{{formData.dateOfConfirmation | date: 'EEEE, MMMM d, y'}}</ion-label>
@@ -126,10 +150,10 @@
             </ion-modal>
           </div>
           
-          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '3'">
-            <mat-label slot="start">Select date married</mat-label>
+          <div class="form-field-group" *ngIf="formData.requestTypeId && formData.requestTypeId === '4'">
+            <mat-label slot="start">Select date</mat-label>
             <ion-item id="open-reference-date-picker" [disabled]="isLoading" fill="outline" lines="none">
-              <ion-label>{{formData.dateMarried | date: 'EEEE, MMMM d, y'}}</ion-label>
+              <ion-label>{{formData.date | date: 'EEEE, MMMM d, y'}}</ion-label>
             </ion-item>
             <ion-modal trigger="open-reference-date-picker" [cssClass]="'bottom-end'">
               <ng-template>
@@ -137,7 +161,7 @@
                   #selectReferenceDateCtrl
                   presentation="date"
                   size="cover"
-                  formControlName="dateMarried"
+                  formControlName="date"
                   [showDefaultButtons]="true"
                 ></ion-datetime>
               </ng-template>
@@ -199,13 +223,13 @@
           <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '3' && previewData.husbandFullName && previewData.husbandFullName !== ''">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.husbandFullName}}</strong></h3>
-              <p style="color: black;">Name of the Husband</p>
+              <p style="color: black;">Husband's Full Name</p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '3' && previewData.wifeFullName && previewData.wifeFullName !== ''">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.wifeFullName}}</strong></h3>
-              <p style="color: black;">Name of the Wife</p>
+              <p style="color: black;">Wife's Full Name</p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="requestStepper.selectedIndex >= 1 && formData.requestTypeId === '1' && previewData.requestersFullName && previewData.requestersFullName !== ''">

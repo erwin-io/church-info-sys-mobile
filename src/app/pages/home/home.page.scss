@@ -35,19 +35,13 @@ ion-content {
     flex-direction: column;
     height: 100%;
     color: #ffffff;
+    text-align: center;
     .text-main {
-      font-size: 60px;
+      font-size: 30px;
       line-height: 1;
       font-weight: 600;
       font-family: sans-serif, "Helvetica Neue", "Lucida Grande", Arial;
       font-stretch: expanded;
-    }
-    .text-action {
-      color: #a2a9ff;
-      text-shadow: 2px 1px 12px #000000;
-      font-size: 30px;
-      line-height: 1;
-      font-weight: 800;
     }
   }
   .footer {
@@ -59,6 +53,12 @@ ion-content {
       text-decoration: none!important;
       font-size: 20px;
       line-height: 1.5;
+    }
+    .text-action {
+      text-shadow: 2px 1px 12px #000000;
+      font-size: 15px;
+      line-height: 1;
+      font-weight: 800;
     }
   }
 }

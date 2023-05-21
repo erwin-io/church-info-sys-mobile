@@ -11,22 +11,35 @@
   },
   "auth": {
     "requireOTP": "false"
-    },
-    "sessionConfig": {
-      "sessionTimeout": "1800"
-    },
+  },
+  "sessionConfig": {
+    "sessionTimeout": "1800"
+  },
   "lookup": {
     "reservationStatus": ["Pending", "Approved", "Completed", "Cancelled"],
     "reservationType": [
       {"reservationTypeId": "1", "name": "Baptism" }, 
       {"reservationTypeId": "2", "name": "Wedding" }, 
-      {"reservationTypeId": "3", "name": "Mass intentions" }, 
-      {"reservationTypeId": "4", "name": "Funeral mass" }
+      {"reservationTypeId": "3", "name": "Petition" }, 
+      {"reservationTypeId": "4", "name": "House Blessing" },
+      {"reservationTypeId": "5", "name": "Funeral mass" }
     ],
     "requestType": [
       {"requestTypeId": "1", "name": "Baptismal Certificate" }, 
-      {"requestTypeId": "2", "name": "Certificate of Confirmation" }, 
-      {"requestTypeId": "3", "name": "Marriage Contract" }
+      {"requestTypeId": "2", "name": "Marriage Certificate" },
+      {"requestTypeId": "3", "name": "Confirmation Certificate" }, 
+      {"requestTypeId": "4", "name": "Death Certificate" }
+    ],
+    "relationship": [
+      {"relationshipId": 1, "name": "Self" },
+      {"relationshipId": 2, "name": "Spouse" },
+      {"relationshipId": 3, "name": "Father" },
+      {"relationshipId": 4, "name": "Mother" },
+      {"relationshipId": 5, "name": "Son" },
+      {"relationshipId": 6, "name": "Daughter" },
+      {"relationshipId": 7, "name": "Grandparent" },
+      {"relationshipId": 8, "name": "Grandchild" },
+      {"relationshipId": 9, "name": "Authorize representative", "message": "Please bring your authorization letter upon receiving the documents." }
     ],
     "massCategory": [
       {"massCategoryId": "1", "name": "Special" }, 
@@ -35,8 +48,7 @@
     "massIntentionType": [
       {"massIntentionTypeId": "1", "name": "Pamisa Pasalamat" }, 
       {"massIntentionTypeId": "2", "name": "Pamisa sa Birthday" }, 
-      {"massIntentionTypeId": "3", "name": "House Blessing" }, 
-      {"massIntentionTypeId": "4", "name": "Pamisa sa Kalag" }
+      {"massIntentionTypeId": "3", "name": "Pamisa sa Kalag" }
     ]
   },
   "apiEndPoints": {
@@ -71,11 +83,15 @@
       "getById": "request/",
       "getRequestForADay": "request/getRequestForADay/",
       "createBaptismalCertificateRequest": "request/createBaptismalCertificateRequest",
-      "createConfirmationCertificateReques": "request/createConfirmationCertificateReques",
-      "createMarriageContractCertificateReques": "request/createMarriageContractCertificateReques",
+      "createConfirmationCertificateRequest": "request/createConfirmationCertificateRequest",
+      "createMarriageContractCertificateRequest": "request/createMarriageContractCertificateRequest",
+      "createCertificateRequest": "request/createCertificateRequest",
       "updateRequestStatus": "request/updateRequestStatus"
     },
     "dashboard": {
+    },
+    "priest": {
+      "findByAvailability": "priest/findByAvailability/"
     }
   }
 }

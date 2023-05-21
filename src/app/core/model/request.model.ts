@@ -13,6 +13,7 @@ export class Request {
   husbandFullName: string;
   wifeFullName: string;
   referenceDate: Date;
+  relationship: Relationship;
 }
 
 export class RequestStatus {
@@ -22,5 +23,10 @@ export class RequestStatus {
 
 export class RequestType {
   requestTypeId: string;
+  name: string;
+}
+
+export class Relationship {
+  relationshipId: string;
   name: string;
 }

@@ -11,6 +11,7 @@ import { UserService } from './user.service';
 import { Client } from '../model/client.model';
 import { ApiResponse } from '../model/api-response.model';
 import { LoginResult } from '../model/loginresult.model';
+import { Router } from '@angular/router';
 
 @Injectable({
   providedIn: 'root'
@@ -23,6 +24,7 @@ export class AuthService implements IServices {
   constructor(private http: HttpClient,
     private appconfig: AppConfigService,
     private userService: UserService,
+    private router: Router,
     private storageService: StorageService,
     ) { }
 
@@ -47,7 +49,12 @@ export class AuthService implements IServices {
     this.storageService.saveLoginUser(null);
     this.storageService.saveSessionExpiredDate(null);
     this.storageService.saveTotalUnreadNotif(0);
-    window.location.href = 'login';
+    const path = this.router.url.split("/")[1];
+    if(path && path !== "") {
+      window.location.href = 'login?ref=' + path;
+    } else {
+      window.location.href = 'login';
+    }
     return this.http.get<any>(environment.apiBaseUrl + this.appconfig.config.apiEndPoints.auth.logout)
     .pipe(
       tap(_ => this.isLoggedIn = false),

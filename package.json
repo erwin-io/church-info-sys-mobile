@@ -6,7 +6,7 @@
   "scripts": {
     "ng": "ng",
     "start": "ng serve",
-    "ionic_serve": "ionic serve --proxy-config proxy.conf.json",
+    "ionic_serve": "ionic serve --host 127.0.0.1 --proxy-config proxy.conf.json",
     "ionic_lab_serve": "ionic serve --lab",
     "ionic_build_prod": "ionic build --prod && npx cap sync android",
     "build": "ng build",

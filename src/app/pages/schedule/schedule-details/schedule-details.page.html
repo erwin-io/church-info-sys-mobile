@@ -74,7 +74,7 @@
     <ion-item class="item" *ngIf="details.reservationType.reservationTypeId !== '2'">
       <ion-icon name="Person" slot="start"></ion-icon>
       <ion-label text-wrap>
-        <h2 class="title">{{details.firstName + ' ' + details.lastName}}</h2>
+        <h2 class="title">{{details.fullName}}</h2>
         <span class="desc">Name</span>
       </ion-label>
     </ion-item>
@@ -90,6 +90,13 @@
       <ion-label text-wrap>
         <h2 class="title">{{details.weddingWifeName}}</h2>
         <span class="desc">Name of the Wife</span>
+      </ion-label>
+    </ion-item>
+    <ion-item class="item">
+      <ion-icon name="radio-button-on-outline" slot="start"></ion-icon>
+      <ion-label text-wrap>
+        <h2 class="title">{{details.priest.priestName}}</h2>
+        <span class="desc">Priest</span>
       </ion-label>
     </ion-item>
   </div>

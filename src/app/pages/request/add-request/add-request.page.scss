@@ -84,3 +84,10 @@ ion-radio-group {
     }
   }
 }
+
+::ng-deep ion-chip {
+  &.request-warning-chip {
+    height: auto!important;
+    margin-top: 15px;
+  }
+}

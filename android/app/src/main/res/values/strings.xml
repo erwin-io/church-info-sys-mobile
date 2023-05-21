@@ -1,7 +1,7 @@
 <?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <string name="app_name">San Nicolas de Bari App</string>
-    <string name="title_activity_main">San Nicolas de Bari App</string>
+    <string name="app_name">San Nicolas de Bari Parish</string>
+    <string name="title_activity_main">San Nicolas de Bari Parish</string>
     <string name="package_name">com.churchinfo.mobile</string>
     <string name="custom_url_scheme">com.churchinfo.mobile</string>
 </resources>

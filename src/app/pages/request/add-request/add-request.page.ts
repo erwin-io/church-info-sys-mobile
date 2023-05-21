@@ -1,12 +1,12 @@
 import { Component, OnInit, ViewChild, ElementRef } from '@angular/core';
-import { FormGroup, FormBuilder, Validators } from '@angular/forms';
+import { FormGroup, FormBuilder, Validators, FormControl } from '@angular/forms';
 import { MatStepper } from '@angular/material/stepper';
 import { DomSanitizer } from '@angular/platform-browser';
 import { IonModal, IonDatetime, ModalController, AlertController, ActionSheetController, Platform } from '@ionic/angular';
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { LoginResult } from 'src/app/core/model/loginresult.model';
-import { Request, RequestType } from 'src/app/core/model/request.model';
+import { Relationship, Request, RequestType } from 'src/app/core/model/request.model';
 import { AppConfigService } from 'src/app/core/services/app-config.service';
 import { RequestService } from 'src/app/core/services/request.service';
 import { PageLoaderService } from 'src/app/core/ui-service/page-loader.service';
@@ -34,6 +34,7 @@ export class AddRequestPage implements OnInit {
   isSubmitting = false;
   isLoading = false;
   requestTypeOption: RequestType[] = [];
+  relationshipOption: {relationshipId: string;name: string; message:any;}[] = [];
   error: any;
   subscription: Subscription;
   allowToClose = false;
@@ -51,7 +52,7 @@ export class AddRequestPage implements OnInit {
     private platform: Platform,
     public sanitizer: DomSanitizer) {
       this.requestTypeOption = this.appconfig.config.lookup.requestType;
-      console.log(this.requestTypeOption);
+      this.relationshipOption = this.appconfig.config.lookup.relationship;
       this.platform.backButton.subscribeWithPriority(-1, () => {
         this.cancel();
       });
@@ -65,12 +66,18 @@ export class AddRequestPage implements OnInit {
         moment(this.requestDetailsForm.value.dateOfConfirmation).format('YYYY-MM-DD') : null,
       dateMarried: this.requestDetailsForm.value.dateMarried ?
         moment(this.requestDetailsForm.value.dateMarried).format('YYYY-MM-DD') : null,
+      date: this.requestDetailsForm.value.date ?
+        moment(this.requestDetailsForm.value.date).format('YYYY-MM-DD') : null,
       clientId: this.currentUser.clientId,
-      requestersFullName: this.requestDetailsForm.value.requestersFullName,
-      husbandFullName: this.requestDetailsForm.value.husbandFullName,
-      wifeFullName: this.requestDetailsForm.value.wifeFullName,
+      requestersFullName: this.requestDetailsForm.value?.requestersFullName ? this.requestDetailsForm.value?.requestersFullName : '',
+      husbandFullName: this.requestDetailsForm.value?.husbandFullName ? this.requestDetailsForm.value?.husbandFullName : '',
+      wifeFullName: this.requestDetailsForm.value?.wifeFullName ? this.requestDetailsForm.value?.wifeFullName : '',
       requestTypeId: this.selectRequestTypeForm.valid ? this.selectRequestTypeForm.value.requestTypeId : null,
-      remarks: this.remarksForm.value.remarks
+      relationshipId: this.selectRequestTypeForm.valid ? this.selectRequestTypeForm.value.relationshipId : null,
+      remarks: this.remarksForm.value.remarks,
+      requestWarningMessage: this.selectRequestTypeForm.controls['relationshipId']?.value ?
+      this.relationshipOption.filter(x=> x.relationshipId === this.selectRequestTypeForm.controls['relationshipId']?.value)[0]?.message :
+      null
     };
   }
 
@@ -86,12 +93,13 @@ export class AddRequestPage implements OnInit {
     return {
       requestType: this.formData.requestTypeId ? this.appconfig.config.lookup.requestType
       .filter(x=>Number(x.requestTypeId) === Number(this.formData.requestTypeId))[0].name : '',
-      dateBaptized: this.formData.dateBaptized,
-      dateOfConfirmation: this.formData.dateOfConfirmation,
-      dateMarried: this.formData.dateMarried,
-      requestersFullName: this.formData.requestersFullName,
-      husbandFullName: this.formData.husbandFullName,
-      wifeFullName: this.formData.wifeFullName,
+      dateBaptized: this.formData.dateBaptized ? this.formData.dateBaptized : '',
+      dateOfConfirmation: this.formData.dateOfConfirmation ? this.formData.dateOfConfirmation : '',
+      dateMarried: this.formData?.dateMarried ? this.formData.dateMarried : '',
+      date: this.formData.date ? this.formData.date : '',
+      requestersFullName: this.formData?.requestersFullName ? this.formData?.requestersFullName : '',
+      husbandFullName: this.formData?.husbandFullName ? this.formData?.husbandFullName : '',
+      wifeFullName: this.formData?.wifeFullName ? this.formData?.wifeFullName : '',
       remarks: this.formData.remarks
     };
   }
@@ -99,14 +107,16 @@ export class AddRequestPage implements OnInit {
   ngOnInit() {
     this.selectRequestTypeForm = this.formBuilder.group({
       requestTypeId: ['', [Validators.required]],
+      relationshipId: ['', [Validators.required]],
     });
     this.requestDetailsForm = this.formBuilder.group({
       dateBaptized: [this.minDate],
       dateOfConfirmation: [this.minDate],
       dateMarried: [this.minDate],
+      date: [this.minDate],
       husbandFullName: [null],
-      requestersFullName: [null],
       wifeFullName: [null],
+      requestersFullName: [null],
     });
     this.remarksForm = this.formBuilder.group({
       remarks: [],
@@ -125,37 +135,45 @@ export class AddRequestPage implements OnInit {
 
   }
 
+  resetValidation(requestTypeId = 0) {
+    this.requestDetailsForm.get('dateBaptized').setValidators([]);
+    this.requestDetailsForm.get('dateOfConfirmation').setValidators([]);
+    this.requestDetailsForm.get('dateMarried').setValidators([]);
+    this.requestDetailsForm.get('date').setValidators([]);
+    this.requestDetailsForm.get('husbandFullName').setValidators([]);
+    this.requestDetailsForm.get('wifeFullName').setValidators([]);
+    this.requestDetailsForm.get('requestersFullName').setValidators([]);
+    
+    if(Number(requestTypeId) === 1) {
+      this.relationshipOption = this.appconfig.config.lookup.relationship;
+      this.requestDetailsForm.get('dateBaptized').setValidators([Validators.required]);
+      this.requestDetailsForm.get('requestersFullName').setValidators([Validators.required]);
+    }
+    else if(Number(requestTypeId) === 2) {
+      this.relationshipOption = this.appconfig.config.lookup.relationship;
+      this.remarksForm = new FormGroup({
+        remarks: new FormControl(null),
+      });
+      this.requestDetailsForm.get('dateMarried').setValidators([Validators.required]);
+      this.requestDetailsForm.get('husbandFullName').setValidators([Validators.required]);
+      this.requestDetailsForm.get('wifeFullName').setValidators([Validators.required]);
+    }
+    else if(Number(requestTypeId) === 3) {
+      this.relationshipOption = this.appconfig.config.lookup.relationship;
+      this.requestDetailsForm.get('dateOfConfirmation').setValidators([Validators.required]);
+      this.requestDetailsForm.get('requestersFullName').setValidators([Validators.required]);
+    } 
+    else {
+      this.relationshipOption = this.appconfig.config.lookup.relationship.filter(x=> Number(x.relationshipId) !== 1);
+      this.selectRequestTypeForm.get('relationshipId')?.reset(null);
+      this.requestDetailsForm.get('date').setValidators([Validators.required]);
+      this.requestDetailsForm.get('requestersFullName').setValidators([Validators.required]);
+    }
+  }
+
   addEventSelectRequestTypeForm() {
     this.selectRequestTypeForm.get('requestTypeId').valueChanges.subscribe(async (selectedValue: number)=> {
-      if(Number(selectedValue) === 1) {
-        this.requestDetailsForm = this.formBuilder.group({
-          dateBaptized: [this.minDate],
-          requestersFullName: [null],
-        });
-        this.requestDetailsForm.controls.dateBaptized.addValidators([Validators.required]);
-        this.requestDetailsForm.controls.requestersFullName.addValidators([Validators.required]);
-      }
-      else if(Number(selectedValue) === 2) {
-        this.requestDetailsForm = this.formBuilder.group({
-          dateOfConfirmation: [this.minDate],
-          requestersFullName: [null],
-        });
-        this.requestDetailsForm.controls.dateOfConfirmation.addValidators([Validators.required]);
-        this.requestDetailsForm.controls.requestersFullName.addValidators([Validators.required]);
-      }
-      else {
-        this.requestDetailsForm = this.formBuilder.group({
-          dateMarried: [this.minDate],
-          husbandFullName: [null],
-          wifeFullName: [null],
-        });
-        this.remarksForm = this.formBuilder.group({
-          remarks: [],
-        });
-        this.requestDetailsForm.controls.dateMarried.addValidators([Validators.required]);
-        this.requestDetailsForm.controls.husbandFullName.addValidators([Validators.required]);
-        this.requestDetailsForm.controls.wifeFullName.addValidators([Validators.required]);
-      }
+      this.resetValidation(selectedValue);
     });
   }
 
@@ -164,7 +182,6 @@ export class AddRequestPage implements OnInit {
   }
 
   onSelectFocus(control: any, value: any) {
-    console.log('click');
     setTimeout(()=>{
       control.setValue(value);
     }, 1000);
@@ -172,23 +189,27 @@ export class AddRequestPage implements OnInit {
 
   cancel() {
     if(this.requestStepper.selectedIndex !== 0) {
-      if(this.requestStepper.selectedIndex === 1) {
-        this.selectRequestTypeForm = this.formBuilder.group({
-          requestTypeId: [null, [Validators.required]],
-        });
-        this.requestDetailsForm = this.formBuilder.group({
-          dateBaptized: [this.minDate],
-          dateOfConfirmation: [this.minDate],
-          dateMarried: [this.minDate],
-          requestersFullName: [null],
-          husbandFullName: [null],
-          wifeFullName: [null],
-        });
-        this.remarksForm = this.formBuilder.group({
-          remarks: [],
-        });
-      }
+      // if(this.requestStepper.selectedIndex === 1) {
+      //   this.selectRequestTypeForm = this.formBuilder.group({
+      //     requestTypeId: [this.formData.requestTypeId, [Validators.required]],
+      //     relationshipId: [this.formData.relationshipId, [Validators.required]],
+      //   });
+      //   this.requestDetailsForm = this.formBuilder.group({
+      //     dateBaptized: [this.minDate],
+      //     dateOfConfirmation: [this.minDate],
+      //     dateMarried: [this.minDate],
+      //     date: [this.minDate],
+      //     requestersFullName: [null],
+      //     husbandFullName: [null],
+      //     wifeFullName: [null],
+      //   });
+      //   this.remarksForm = this.formBuilder.group({
+      //     remarks: [],
+      //   });
+      // }
       this.requestStepper.selectedIndex  = this.requestStepper.selectedIndex - 1;
+      
+      this.resetValidation(this.formData.requestTypeId);
       this.addEventSelectRequestTypeForm();
     }
     else {
@@ -199,7 +220,6 @@ export class AddRequestPage implements OnInit {
 
   async save(){
     const params = this.formData;
-    console.log(params);
     try{
       await this.pageLoaderService.open('Submitting request...');
       this.isSubmitting = true;
@@ -233,9 +253,40 @@ export class AddRequestPage implements OnInit {
               buttons: ['OK']
             });
           });
-      }
+      } 
       else if(params.requestTypeId === '2'){
-       this.requestService.createConfirmationCertificateReques(params)
+       this.requestService.createMarriageContractCertificateRequest(params)
+       .subscribe(async res => {
+         if (res.success) {
+           await this.presentAlert({
+             header: 'Request sent!',
+             buttons: ['OK']
+           });
+           this.isSubmitting = false;
+           this.modal.canDismiss = true;
+           this.modal.dismiss({success: true, data: res.data}, 'confirm');
+           await this.pageLoaderService.close();
+         } else {
+           await this.pageLoaderService.close();
+           this.isSubmitting = false;
+           await this.presentAlert({
+             header: 'Try again!',
+             message: Array.isArray(res.message) ? res.message[0] : res.message,
+             buttons: ['OK']
+           });
+         }
+       }, async (err) => {
+         await this.pageLoaderService.close();
+         this.isSubmitting = false;
+         await this.presentAlert({
+           header: 'Try again!',
+           message: Array.isArray(err.message) ? err.message[0] : err.message,
+           buttons: ['OK']
+         });
+       });
+      }
+      else if(params.requestTypeId === '3'){
+       this.requestService.createConfirmationCertificateRequest(params)
          .subscribe(async res => {
            if (res.success) {
              await this.presentAlert({
@@ -266,35 +317,35 @@ export class AddRequestPage implements OnInit {
          });
       }
       else {
-       this.requestService.createMarriageContractCertificateReques(params)
-         .subscribe(async res => {
-           if (res.success) {
-             await this.presentAlert({
-               header: 'Request sent!',
-               buttons: ['OK']
-             });
-             this.isSubmitting = false;
-             this.modal.canDismiss = true;
-             this.modal.dismiss({success: true, data: res.data}, 'confirm');
-             await this.pageLoaderService.close();
-           } else {
-             await this.pageLoaderService.close();
-             this.isSubmitting = false;
-             await this.presentAlert({
-               header: 'Try again!',
-               message: Array.isArray(res.message) ? res.message[0] : res.message,
-               buttons: ['OK']
-             });
-           }
-         }, async (err) => {
-           await this.pageLoaderService.close();
-           this.isSubmitting = false;
-           await this.presentAlert({
-             header: 'Try again!',
-             message: Array.isArray(err.message) ? err.message[0] : err.message,
-             buttons: ['OK']
-           });
-         });
+        this.requestService.createCertificateRequest(params)
+          .subscribe(async res => {
+            if (res.success) {
+              await this.presentAlert({
+                header: 'Request sent!',
+                buttons: ['OK']
+              });
+              this.isSubmitting = false;
+              this.modal.canDismiss = true;
+              this.modal.dismiss({success: true, data: res.data}, 'confirm');
+              await this.pageLoaderService.close();
+            } else {
+              await this.pageLoaderService.close();
+              this.isSubmitting = false;
+              await this.presentAlert({
+                header: 'Try again!',
+                message: Array.isArray(res.message) ? res.message[0] : res.message,
+                buttons: ['OK']
+              });
+            }
+          }, async (err) => {
+            await this.pageLoaderService.close();
+            this.isSubmitting = false;
+            await this.presentAlert({
+              header: 'Try again!',
+              message: Array.isArray(err.message) ? err.message[0] : err.message,
+              buttons: ['OK']
+            });
+          });
       }
     } catch (e){
       await this.pageLoaderService.close();

@@ -37,7 +37,7 @@ ion-radio-group {
     }
   }
 }
-#selectTimeSlotForm {
+#selectTimeSlotForm,#selectPriestForm {
   display: flex!important;
   height: 100%;
   fieldset {
@@ -46,7 +46,11 @@ ion-radio-group {
     .form-field-group {
       flex-grow: 0!important;
     }
-    .no-time-slot-available {
+  }
+}
+#selectTimeSlotForm,#selectPriestForm {
+  fieldset {
+    .no-available {
       flex-grow: 1;
       display: flex!important;
       flex-direction: column;

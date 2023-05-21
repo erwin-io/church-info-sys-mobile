@@ -1,10 +1,14 @@
 <ion-header no-border no-shadow>
   <ion-toolbar class="home-toolbar">
-    <div slot="start" style="width: 48px"></div>
-    <ion-title class="ion-text-center home">Home</ion-title>
-    <ion-buttons slot="end">
+    <ion-buttons slot="start">
       <ion-button (click)="onShowSettings()">
         <ion-icon slot="icon-only" name="person-circle"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+    <ion-title class="ion-text-center home">Home</ion-title>
+    <ion-buttons slot="end">
+      <ion-button id="open-help-modal">
+        <ion-icon slot="icon-only" name="help-circle-outline"></ion-icon>
       </ion-button>
     </ion-buttons>
   </ion-toolbar>
@@ -16,17 +20,16 @@
   </ion-refresher>
   <div class="container">
     <div class="welcome">
-      <h1 class="text-main">Welcome to San Nicolas de Bari App</h1>
-      <span class="text-action" id="open-modal" expand="block">Get Started</span>
+      <h1 class="text-main">Welcome to San Nicolas de Bari Parish</h1>
     </div>
     <div class="footer">
-      <span>Contact Us</span>
-      <a href="tel:09463701342">09463701342</a>
-      <a href="mailto:colasdebari1848@gmail.com">colasdebari1848@gmail.com</a>
+      <!-- <span class="text-action" id="open-service-modal" expand="block">Get Started</span> -->
+      
+      <ion-button shape="round" color="light" class="text-action" id="open-service-modal" expand="block">Get Started</ion-button>
     </div>
   </div>
   
-  <ion-modal #modal trigger="open-modal" [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5]" 
+  <ion-modal #serviceModal trigger="open-service-modal" [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5]" 
   animated="true" swipeToClose="true"
   showBackdrop="true"
   canDismiss="true"
@@ -40,13 +43,40 @@
         margin: 20px 20px 0 20px;
         text-align: center;"><strong>SERVICES</strong></h3>
         <ion-list class="home-menu">
-          <ion-item routerLink="/schedule" (click)="modal.dismiss()" replaceUrl="true">
+          <ion-item routerLink="/schedule" (click)="serviceModal.dismiss()" replaceUrl="true">
             <ion-icon name="today" slot="start"></ion-icon>
             <ion-label>Book a reservation</ion-label>
           </ion-item>
-          <ion-item routerLink="/request" (click)="modal.dismiss()" replaceUrl="true">
+          <ion-item routerLink="/request" (click)="serviceModal.dismiss()" replaceUrl="true">
             <ion-icon name="document" slot="start" ></ion-icon>
             <ion-label>Request a certificate</ion-label>
+          </ion-item>
+        </ion-list>
+      </ion-content>
+    </ng-template>
+  </ion-modal>
+  
+  <ion-modal #helpModal trigger="open-help-modal" [initialBreakpoint]="0.25" [breakpoints]="[0, 0.25, 0.5]" 
+  animated="true" swipeToClose="true"
+  showBackdrop="true"
+  canDismiss="true"
+  handle="true"
+  handleBehavior="cycle"
+  backdropDismiss="true">
+    <ng-template>
+      <ion-content>
+        <h3 style="
+        color: rgba(0,0,0)!important;
+        margin: 20px 20px 0 20px;
+        text-align: center;"><strong>CONTACT US</strong></h3>
+        <ion-list class="home-menu">
+          <ion-item (click)="contact('tel:09463701342');helpModal.dismiss();" replaceUrl="true">
+            <ion-icon name="call" slot="start"></ion-icon>
+            <ion-label>09463701342</ion-label>
+          </ion-item>
+          <ion-item (click)="contact('mailto:colasdebari1848@gmail.com');helpModal.dismiss()" replaceUrl="true">
+            <ion-icon name="mail" slot="start" ></ion-icon>
+            <ion-label>colasdebari1848@gmail.com</ion-label>
           </ion-item>
         </ion-list>
       </ion-content>

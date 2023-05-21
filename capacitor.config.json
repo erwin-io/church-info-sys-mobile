@@ -1,6 +1,6 @@
 {
   "appId": "com.churchinfo.mobile",
-  "appName": "San Nicolas de Bari App",
+  "appName": "San Nicolas de Bari Parish",
   "bundledWebRuntime": false,
   "npmClient": "npm",
   "webDir": "www",

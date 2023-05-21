@@ -31,21 +31,9 @@
           <div class="form-field-group" >
             <mat-label>Select reservation type</mat-label>
             <ion-radio-group formControlName="reservationTypeId" >
-              <ion-item fill="outline" lines="none">
-                <ion-label>Baptism</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Wedding</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Mass intentions</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Funeral mass</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="4"></ion-radio>
+              <ion-item *ngFor="let reservation of reservationTypeOption" fill="outline" lines="none">
+                <ion-label>{{reservation.name}}</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" [value]="reservation.reservationTypeId"></ion-radio>
               </ion-item>
             </ion-radio-group>
             <span class="error" *ngIf="errorControls.reservationTypeId.touched && errorControls.reservationTypeId.errors && errorControls.reservationTypeId.errors.required">
@@ -64,13 +52,9 @@
           <div class="form-field-group" >
             <mat-label>Select mass category</mat-label>
             <ion-radio-group formControlName="massCategoryId" >
-              <ion-item fill="outline" lines="none">
-                <ion-label>Special</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Common</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
+              <ion-item *ngFor="let massCategory of massCategoryOption" fill="outline" lines="none">
+                <ion-label>{{massCategory.name}}</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" [value]="massCategory.massCategoryId"></ion-radio>
               </ion-item>
             </ion-radio-group>
             <span class="error" *ngIf="errorControls.massCategoryId.touched && errorControls.massCategoryId.errors && errorControls.massCategoryId.errors.required">
@@ -89,21 +73,9 @@
           <div class="form-field-group" >
             <mat-label>Select mass intention type</mat-label>
             <ion-radio-group formControlName="massIntentionTypeId" >
-              <ion-item fill="outline" lines="none">
-                <ion-label>Pamisa Pasalamat</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="1"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Pamisa sa Birthday</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="2"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>House Blessing</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="3"></ion-radio>
-              </ion-item>
-              <ion-item fill="outline" lines="none">
-                <ion-label>Pamisa sa Kalag</ion-label>
-                <ion-radio [disabled]="isLoading" slot="end" value="4"></ion-radio>
+              <ion-item *ngFor="let massIntentionType of massIntentionTypeOption" fill="outline" lines="none">
+                <ion-label>{{massIntentionType.name}}</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" [value]="massIntentionType.massIntentionTypeId"></ion-radio>
               </ion-item>
             </ion-radio-group>
             <span class="error" *ngIf="errorControls.massIntentionTypeId.touched && errorControls.massIntentionTypeId.errors && errorControls.massIntentionTypeId.errors.required">
@@ -120,46 +92,35 @@
       (ngSubmit)="nameForm.valid ? reservationStepper.next() : false">
         <fieldset [disabled]="isSubmitting || isLoading">
           <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2'">
-            <mat-label slot="start">First name</mat-label>
+            <mat-label slot="start">Full name</mat-label>
             <mat-form-field appearance="outline">
-              <mat-label>First name</mat-label>
+              <mat-label>Full name</mat-label>
               <input
                 matInput
                 type="text"
-                placeholder="First name"
-                formControlName="firstName">
-            </mat-form-field>
-          </div>
-          <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2'">
-            <mat-label slot="start">Last name</mat-label>
-            <mat-form-field appearance="outline">
-              <mat-label>Last name</mat-label>
-              <input
-                matInput
-                type="text"
-                placeholder="Last name"
-                formControlName="lastName">
+                placeholder="Full name"
+                formControlName="fullName">
             </mat-form-field>
           </div>
           <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2'">
-            <mat-label slot="start">Name of the Husband</mat-label>
+            <mat-label slot="start">Husband's Full Name</mat-label>
             <mat-form-field appearance="outline">
-              <mat-label>Name of the Husband</mat-label>
+              <mat-label>Husband's Full Name</mat-label>
               <input
                 matInput
                 type="text"
-                placeholder="Name of the Husband"
+                placeholder="Husband's Full Name"
                 formControlName="weddingHusbandName">
             </mat-form-field>
           </div>
           <div class="form-field-group" *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2'">
-            <mat-label slot="start">Name of the Wife</mat-label>
+            <mat-label slot="start">Wife's Maiden Name</mat-label>
             <mat-form-field appearance="outline">
-              <mat-label>Name of the Wife</mat-label>
+              <mat-label>Wife's Maiden Name</mat-label>
               <input
                 matInput
                 type="text"
-                placeholder="Name of the Wife"
+                placeholder="Wife's Maiden Name"
                 formControlName="weddingWifeName">
               </mat-form-field>
           </div>
@@ -200,13 +161,44 @@
             </ion-radio-group>
           </div>
           <ng-template #elseLoadingTimeSlot>
-            <div class="no-time-slot-available">
+            <div class="no-available">
               <span>Loading time slot please wait...</span>
             </div>
           </ng-template>
           <ng-container *ngIf="!isLoading && availableTimeSlot.length <=0">
-            <div class="no-time-slot-available">
-              <span>Sorry!<br>No available time slot to show, <br>try another date</span>
+            <div class="no-available">
+              <span>Sorry!<br>No available time slot to show, <br>try other date</span>
+            </div>
+          </ng-container>
+        </fieldset>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="selectPriestForm" >
+      <form
+      id="selectPriestForm"
+      [formGroup]="selectPriestForm"
+      (ngSubmit)="selectPriestForm.valid ? reservationStepper.next() : false">
+        <fieldset [disabled]="isSubmitting || isLoading">
+          <div class="form-field-group" *ngIf="!isLoading; else elseLoadingPriest;" >
+            <mat-label *ngIf="priestOption.length > 0">Select priest</mat-label>
+            <ion-radio-group formControlName="priestId" >
+              <ion-item *ngFor="let priest of priestOption" fill="outline" lines="none">
+                <ion-label>{{priest.priestName}}</ion-label>
+                <ion-radio [disabled]="isLoading" slot="end" [value]="priest.priestId"></ion-radio>
+              </ion-item>
+            </ion-radio-group>
+            <span class="error" *ngIf="errorControls.priestId.touched && errorControls.priestId.errors && errorControls.priestId.errors.required">
+              Please select a priest
+            </span>
+          </div>
+          <ng-template #elseLoadingPriest>
+            <div class="no-available">
+              <span>Loading please wait...</span>
+            </div>
+          </ng-template>
+          <ng-container *ngIf="!isLoading && priestOption.length <=0">
+            <div class="no-available">
+              <span>Sorry!<br>No availbe priest to show, <br>press back and choose other date</span>
             </div>
           </ng-container>
         </fieldset>
@@ -267,11 +259,9 @@
               <p style="color: black;">Mass intention type</p>
             </ion-label>
           </ion-item>
-          <ion-item *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2' &&
-          formData.firstName && formData.firstName !== '' &&
-           formData.lastName && formData.lastName !== ''">
+          <ion-item *ngIf="formData.reservationTypeId && formData.reservationTypeId !== '2' && formData.fullName && formData.fullName !== ''">
             <ion-label>
-              <h3 style="color: black;"><strong>{{previewData.firstName + ' ' + previewData.lastName}}</strong></h3>
+              <h3 style="color: black;"><strong>{{previewData.fullName}}</strong></h3>
               <p style="color: black;">Name</p>
             </ion-label>
           </ion-item>
@@ -279,20 +269,26 @@
           formData.weddingHusbandName && formData.weddingHusbandName !== ''">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.weddingHusbandName}}</strong></h3>
-              <p style="color: black;">Name of the Husband</p>
+              <p style="color: black;">Husband's Full Name</p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="formData.reservationTypeId && formData.reservationTypeId === '2' &&
           formData.weddingWifeName && formData.weddingWifeName !== ''">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.weddingWifeName}}</strong></h3>
-              <p style="color: black;">Name of the Wife</p>
+              <p style="color: black;">Wife's Maiden Name</p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="previewData.reservationDate && selectTimeSlotForm.value.selectTime !== '' && !formData.time.toLowerCase().includes('invalid date')">
             <ion-label>
               <h3 style="color: black;"><strong>{{previewData.reservationDate + ' ' + formData.time | date: 'EEE, MMM dd hh:mm a'}}</strong></h3>
               <p style="color: black;">Date</p>
+            </ion-label>
+          </ion-item>
+          <ion-item *ngIf="previewData.priest && previewData.priest !== ''">
+            <ion-label>
+              <h3 style="color: black;"><strong>{{previewData.priest}}</strong></h3>
+              <p style="color: black;">Priest</p>
             </ion-label>
           </ion-item>
           <ion-item *ngIf="previewData.remarks && previewData.remarks !== ''">
@@ -330,7 +326,7 @@
     (click)="onMassIntensionTypeSelected()">Next</ion-button>
   <ion-button
     [disabled]="isLoading ||
-    (formData.reservationTypeId !== '2' ? !formData.firstName || !formData.lastName : false)
+    (formData.reservationTypeId !== '2' ? !formData.fullName : false)
     "
     *ngIf="reservationStepper.selectedIndex === 3"
     color="primary"
@@ -343,16 +339,23 @@
     color="primary"
     size="large"
     expand="block"
+    (click)="onTimeSlotSelected()">Next</ion-button>
+  <ion-button
+    [disabled]="isLoading || !selectPriestForm.valid"
+    *ngIf="reservationStepper.selectedIndex === 5"
+    color="primary"
+    size="large"
+    expand="block"
     (click)="reservationStepper.next();">Next</ion-button>
   <ion-button
     [disabled]="isLoading || !remarksForm.valid"
-    *ngIf="reservationStepper.selectedIndex === 5"
+    *ngIf="reservationStepper.selectedIndex === 6"
     color="primary"
     size="large"
     expand="block"
     (click)="save()">Save</ion-button>
   <ion-button
-    *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 5"
+    *ngIf="reservationStepper.selectedIndex > 0 && reservationStepper.selectedIndex <= 6"
     color="primary"
     size="large"
     expand="block"

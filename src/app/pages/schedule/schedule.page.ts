@@ -73,7 +73,6 @@ export class SchedulePage implements OnInit {
   }
 
   ionViewWillEnter(){
-    console.log('visited');
   }
 
   ionViewDidEnter() {

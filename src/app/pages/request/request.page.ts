@@ -71,7 +71,6 @@ export class RequestPage implements OnInit {
   }
 
   ionViewWillEnter(){
-    console.log('visited');
   }
 
   ionViewDidEnter() {

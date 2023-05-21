@@ -22,6 +22,7 @@ export class LoginPage implements OnInit {
   loginForm: FormGroup;
   sessionTimeout;
   enableBackToHome = false;
+  callback = 'home';
   constructor(
     private formBuilder: FormBuilder,
     private router: Router,
@@ -34,12 +35,15 @@ export class LoginPage implements OnInit {
     private appconfig: AppConfigService,
     private pageLoaderService: PageLoaderService,
     ) {
-      // this.route.queryParams
-      //   .subscribe(params => {
-      //     console.log(params);
-      //     this.enableBackToHome = params.ref.includes('home');
-      //   }
-      // );
+      this.route.queryParams
+        .subscribe(params => {
+          console.log(params);
+          if(params.ref && (params.ref === "home" || params.ref === "schedule" || params.ref === "request")) {
+            this.callback = params.ref;
+          }
+          // this.enableBackToHome = params.ref.includes('home');
+        }
+      );
 
       this.sessionTimeout = Number(
         this.appconfig.config.sessionConfig.sessionTimeout
@@ -77,6 +81,7 @@ export class LoginPage implements OnInit {
                 }
               };
               this.router.navigate(['/verify-otp'], navigationExtras);
+              await this.pageLoaderService.close();
             } else {
               this.storageService.saveRefreshToken(res.data.accessToken);
               this.storageService.saveAccessToken(res.data.refreshToken);
@@ -86,12 +91,13 @@ export class LoginPage implements OnInit {
               this.storageService.saveSessionExpiredDate(today);
               const userData: LoginResult = res.data;
               this.storageService.saveLoginUser(userData);
-              this.router.navigate(['/'], { replaceUrl: true });
+              this.router.navigate(['/' + this.callback], { replaceUrl: true });
               this.isSubmitting = false;
               await this.pageLoaderService.close();
             }
           } else {
             this.isSubmitting = false;
+            await this.pageLoaderService.close();
             await this.presentAlert({
               header: 'Try again!',
               message: Array.isArray(res.message) ? res.message[0] : res.message,

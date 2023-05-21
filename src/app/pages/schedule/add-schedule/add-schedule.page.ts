@@ -6,8 +6,9 @@ import { IonModal, IonDatetime, ModalController, AlertController, ActionSheetCon
 import * as moment from 'moment';
 import { Subscription } from 'rxjs';
 import { LoginResult } from 'src/app/core/model/loginresult.model';
-import { Reservation, ReservationType } from 'src/app/core/model/reservation.model';
+import { MassCategory, MassIntentionType, Priest, Reservation, ReservationType } from 'src/app/core/model/reservation.model';
 import { AppConfigService } from 'src/app/core/services/app-config.service';
+import { PriestService } from 'src/app/core/services/priest.service';
 import { ReservationService } from 'src/app/core/services/reservation.service';
 import { PageLoaderService } from 'src/app/core/ui-service/page-loader.service';
 
@@ -31,11 +32,15 @@ export class AddSchedulePage implements OnInit {
   selectMassCategoryForm: FormGroup;
   selectMassIntensionTypeForm: FormGroup;
   selectTimeSlotForm: FormGroup;
+  selectPriestForm: FormGroup;
   nameForm: FormGroup;
   remarksForm: FormGroup;
   isSubmitting = false;
   isLoading = false;
   reservationTypeOption: ReservationType[] = [];
+  massCategoryOption: MassCategory[] = [];
+  massIntentionTypeOption: MassIntentionType[] = [];
+  priestOption: Priest[] = [];
   error: any;
   subscription: Subscription;
   allowToClose = false;
@@ -55,6 +60,7 @@ export class AddSchedulePage implements OnInit {
     private formBuilder: FormBuilder,
     private alertController: AlertController,
     private reservationService: ReservationService,
+    private priestService: PriestService,
     private actionSheetController: ActionSheetController,
     private pageLoaderService: PageLoaderService,
     private appconfig: AppConfigService,
@@ -65,6 +71,8 @@ export class AddSchedulePage implements OnInit {
       this.timeSlotConfig.notAvailableHours = this.appconfig.config.reservationConfig.timeSlotNotAvailableHours;
       this.timeSlotConfig.dayOfWeekNotAvailable = this.appconfig.config.reservationConfig.dayOfWeekNotAvailable;
       this.reservationTypeOption = this.appconfig.config.lookup.reservationType;
+      this.massCategoryOption = this.appconfig.config.lookup.massCategory;
+      this.massIntentionTypeOption = this.appconfig.config.lookup.massIntentionType;
       this.platform.backButton.subscribeWithPriority(-1, () => {
         this.cancel();
       });
@@ -88,7 +96,8 @@ export class AddSchedulePage implements OnInit {
        this.selectMassIntensionTypeForm.valid ?
       this.selectMassIntensionTypeForm.value.massIntentionTypeId : null,
       remarks: this.remarksForm.value.remarks,
-      ...this.nameForm.value,
+      priestId: this.selectPriestForm.value.priestId,
+      ...this.nameForm.value
     };
   }
 
@@ -98,13 +107,13 @@ export class AddSchedulePage implements OnInit {
       ...this.selectMassCategoryForm.controls,
       ...this.selectMassIntensionTypeForm.controls,
       ...this.selectTimeSlotForm.controls,
+      ...this.selectPriestForm.controls,
       ...this.remarksForm.controls,
       ...this.nameForm.controls,
     };
   }
 
   get previewData() {
-    console.log(this.formData);
     return {
       reservationType: this.formData.reservationTypeId ? this.appconfig.config.lookup.reservationType.
       filter(x=>Number(x.reservationTypeId) === Number(this.formData.reservationTypeId))[0].name : '',
@@ -114,6 +123,9 @@ export class AddSchedulePage implements OnInit {
       massIntentionType: this.formData.massIntentionTypeId ?
       this.appconfig.config.lookup.massIntentionType.
       filter(x=>Number(x.massIntentionTypeId) === Number(this.formData.massIntentionTypeId))[0].name : '',
+      priest: this.formData.priestId ?
+      this.priestOption.
+      filter(x=>Number(x.priestId) === Number(this.formData.priestId))[0].priestName : '',
       remarks: this.formData.remarks,
       ...this.formData,
     };
@@ -130,14 +142,16 @@ export class AddSchedulePage implements OnInit {
       massIntentionTypeId: [null, Validators.required],
     });
     this.nameForm = this.formBuilder.group({
-      firstName: [null],
-      lastName: [null],
+      fullName: [null],
       weddingHusbandName: [null],
       weddingWifeName: [null],
     });
     this.selectTimeSlotForm = this.formBuilder.group({
       selectTimeSlotDate: [this.minDate, Validators.required],
       selectTime: [null, Validators.required],
+    });
+    this.selectPriestForm = this.formBuilder.group({
+      priestId: [null, Validators.required],
     });
     this.remarksForm = this.formBuilder.group({
       remarks: [],
@@ -186,7 +200,6 @@ export class AddSchedulePage implements OnInit {
   }
 
   onSelectFocus(control: any, value: any) {
-    console.log('click');
     setTimeout(()=>{
       control.setValue(value);
     }, 1000);
@@ -260,13 +273,20 @@ export class AddSchedulePage implements OnInit {
     await this.initTimeSlot();
   }
 
+  async onTimeSlotSelected() {
+    this.reservationStepper.next();
+    const dayOfWeek = new Date(this.selectTimeSlotForm.get('selectTimeSlotDate').value).getDay();
+    const hour: string = this.selectTimeSlotForm.get('selectTime').value.toString();
+    await this.getPriestAvailable(dayOfWeek, Number(hour?.split(":")[0]));
+  }
+
   onBack() {
     if((this.formData.reservationTypeId === '1' || this.formData.reservationTypeId === '2') &&
     this.reservationStepper.selectedIndex === 3) {
       this.reservationStepper.selectedIndex = 1;
     } else if(this.formData.reservationTypeId === '3' && this.reservationStepper.selectedIndex === 2) {
       this.reservationStepper.selectedIndex = 0;
-    } else if(this.formData.reservationTypeId === '4' && this.reservationStepper.selectedIndex === 3) {
+    } else if((this.formData.reservationTypeId === '4' || this.formData.reservationTypeId === '5') && this.reservationStepper.selectedIndex === 3) {
       this.reservationStepper.selectedIndex = 0;
     }
     else {
@@ -358,7 +378,6 @@ export class AddSchedulePage implements OnInit {
   }
 
   async getReservationsForADay(dateString: string, timeSlotOptions: string[]) {
-    console.log(timeSlotOptions);
     try{
       this.isLoading = true;
       await this.reservationService.getReservationsForADay(dateString)
@@ -409,7 +428,52 @@ export class AddSchedulePage implements OnInit {
       });
     }
     catch(e){
-      console.log(e);
+      await this.presentAlert({
+        header: 'Try again!',
+        subHeader: '',
+        message: Array.isArray(e.message) ? e.message[0] : e.message,
+        buttons: ['OK']
+      });
+    }
+  }
+
+  async getPriestAvailable(dayNum = 0, timeNum = 0) {
+    try{
+      this.isLoading = true;
+      await this.priestService.findByAvailability({
+        dayNum,
+        timeNum
+      })
+      .subscribe(async res => {
+        if(res.success){
+          this.priestOption = res.data.map(x=>{
+            return {
+              priestId: x.priestId,
+              priestName: x.priestName,
+            }
+          });
+          this.isLoading = false;
+        }
+        else{
+          await this.presentAlert({
+            header: 'Try again!',
+            subHeader: '',
+            message: Array.isArray(res.message) ? res.message[0] : res.message,
+            buttons: ['OK']
+          });
+          this.isLoading = false;
+        }
+      }, async (e) => {
+        await this.presentAlert({
+          header: 'Try again!',
+          subHeader: '',
+          message: Array.isArray(e.message) ? e.message[0] : e.message,
+          buttons: ['OK']
+        });
+        this.isLoading = false;
+      });
+    }
+    catch(e){
       await this.presentAlert({
         header: 'Try again!',
         subHeader: '',

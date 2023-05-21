@@ -65,11 +65,11 @@ export class RequestService implements IServices {
       );
   }
 
-  createConfirmationCertificateReques(data: any): Observable<ApiResponse<Request>> {
+  createConfirmationCertificateRequest(data: any): Observable<ApiResponse<Request>> {
     return this.http
       .post<any>(
         environment.apiBaseUrl +
-          this.appconfig.config.apiEndPoints.request.createConfirmationCertificateReques,
+          this.appconfig.config.apiEndPoints.request.createConfirmationCertificateRequest,
         data
       )
       .pipe(
@@ -78,11 +78,24 @@ export class RequestService implements IServices {
       );
   }
 
-  createMarriageContractCertificateReques(data: any): Observable<ApiResponse<Request>> {
+  createMarriageContractCertificateRequest(data: any): Observable<ApiResponse<Request>> {
     return this.http
       .post<any>(
         environment.apiBaseUrl +
-          this.appconfig.config.apiEndPoints.request.createMarriageContractCertificateReques,
+          this.appconfig.config.apiEndPoints.request.createMarriageContractCertificateRequest,
+        data
+      )
+      .pipe(
+        tap((_) => this.log('request')),
+        catchError(this.handleError('request', []))
+      );
+  }
+
+  createCertificateRequest(data: any): Observable<ApiResponse<Request>> {
+    return this.http
+      .post<any>(
+        environment.apiBaseUrl +
+          this.appconfig.config.apiEndPoints.request.createCertificateRequest,
         data
       )
       .pipe(
