@@ -4,7 +4,7 @@
     "type": "APK",
     "kind": "Directory"
   },
-  "applicationId": "com.churchinfo.mobile",
+  "applicationId": "com.tailorbooking.mobile",
   "variantName": "release",
   "elements": [
     {
